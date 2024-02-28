@@ -1,19 +1,32 @@
 package com.github.coderodde.util.benchmark;
 
 import com.github.coderodde.util.SkipListMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 
 public final class SkipListMapBenchmark {
     
+    private static final int MAP_SIZE = 10_000;
+    
     public static void main(String[] args) {
         long seed = parseSeed(args);
         double coinProbability = parseCoinProbability(args);
-        coinProbability = 0.5;
+        coinProbability = 0.25;
         System.out.printf("Seed = %d.\n", seed);
         System.out.printf("Coin probability = %f.\n", coinProbability);
         
         Random random = new Random(seed);
+        
+        List<Integer> list = new ArrayList<>(MAP_SIZE);
+        
+        for (int i = 0; i < MAP_SIZE; i++) {
+            list.add(i);
+        }
+        
+        Collections.shuffle(list, random);
         
         SkipListMap<Integer, Long> skipListMap = 
                 new SkipListMap<>(coinProbability, random);
@@ -25,8 +38,8 @@ public final class SkipListMapBenchmark {
         
         long start = System.currentTimeMillis();
         
-        for (int i = 0; i < 1_000_000; i++) {
-            skipListMap.put(i, (long) i);
+        for (Integer key : list) {
+            skipListMap.put(key, Long.valueOf(key));
         }
         
         long end = System.currentTimeMillis();
@@ -38,8 +51,8 @@ public final class SkipListMapBenchmark {
         
         start = System.currentTimeMillis();
         
-        for (int i = 0; i < 1_000_000; i++) {
-            treeMap.put(i, (long) i);
+        for (Integer key : list) {
+            treeMap.put(key, Long.valueOf(key));
         }
         
         end = System.currentTimeMillis();
@@ -49,10 +62,12 @@ public final class SkipListMapBenchmark {
         System.out.printf("TreeMap.put in %d milliseconds.\n",
                           end - start);
         
+        Collections.shuffle(list, random);
+        
         start = System.currentTimeMillis();
         
-        for (int i = -10_000; i < 1_010_00; i++) {
-            skipListMap.get(i);
+        for (Integer key : list) {
+            skipListMap.get(key);
         }
         
         end = System.currentTimeMillis();
@@ -64,8 +79,8 @@ public final class SkipListMapBenchmark {
         
         start = System.currentTimeMillis();
         
-        for (int i = -10_000; i < 1_010_00; i++) {
-            treeMap.get(i);
+        for (Integer key : list) {
+            treeMap.get(key);
         }
         
         end = System.currentTimeMillis();
@@ -75,10 +90,12 @@ public final class SkipListMapBenchmark {
         System.out.printf("TreeMap.get %d milliseconds.\n",
                           end - start);
         
+        Collections.shuffle(list, random);
+        
         start = System.currentTimeMillis();
         
-        for (int i = -10_000; i < 1_010_00; i++) {
-            skipListMap.remove(i);
+        for (Integer key : list) {
+            skipListMap.remove(key);
         }
         
         end = System.currentTimeMillis();
@@ -90,8 +107,8 @@ public final class SkipListMapBenchmark {
         
         start = System.currentTimeMillis();
         
-        for (int i = -10_000; i < 1_010_00; i++) {
-            treeMap.remove(i);
+        for (Integer key : list) {
+            treeMap.remove(key);
         }
         
         end = System.currentTimeMillis();

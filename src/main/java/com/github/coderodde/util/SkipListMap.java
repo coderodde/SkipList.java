@@ -19,7 +19,7 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
     /**
      * The default coin probability.
      */
-    public static final double DEFAULT_COIN_PROBABILITY = 0.25;
+    public static final double DEFAULT_COIN_PROBABILITY = 0.5;
     
     /**
      * The minimum coin probability;
@@ -34,7 +34,7 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
     /**
      * The maximum level of this skip list.
      */
-    private static final int MAXIMUM_LEVELS = 2;
+    private static final int MAXIMUM_LEVELS = 20;
     
     /**
      * Implements the actual skip list node.
@@ -46,26 +46,21 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
                                                V> {
         K key;
         V value;
-        int levels;
-        List<SkipListMapNode<K, V>> forward;
+        SkipListMapNode<K, V>[] forward;
         
         SkipListMapNode(K key, V value, int levels) {
             this.key = key;
             this.value = value;
-            this.levels = levels;
-            this.forward = new ArrayList<>(levels);
-            
-            for (int i = 0; i < levels; i++) {
-                this.forward.add(NIL);
-            }
+            this.forward = new SkipListMapNode[levels];
         }
         
         @Override
         public String toString() {
-            return String.format("[key = '%s', value = '%s', levels = %d]", 
-                                 Objects.toString(key), 
-                                 Objects.toString(value),
-                                 levels);
+            return String.format(
+                    "[key = '%s', value = '%s', forward list size = '%d']", 
+                    Objects.toString(key), 
+                    Objects.toString(value),
+                    forward.length);
         }
     }
     
@@ -78,13 +73,6 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
      * The number of levels in this skip list.
      */
     private int numberOfLevels = 1;
-    
-    /**
-     * The NIL sentinel skip list node.
-     */
-    private static final SkipListMapNode NIL = new SkipListMapNode(null, 
-                                                                   null, 
-                                                                   0);
     /**
      * The header node.
      */
@@ -153,25 +141,20 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
 
     @Override
     public V put(K key, V value) {
-        List<SkipListMapNode<K, V>> update = new ArrayList<>(MAXIMUM_LEVELS);
-        
-        for (int i = 0; i < MAXIMUM_LEVELS; i++) {
-            update.add(null);
-        }
-        
+        SkipListMapNode<K, V>[] update = new SkipListMapNode[MAXIMUM_LEVELS];
         SkipListMapNode<K, V> x = header;
         
         for (int i = numberOfLevels - 1; i >= 0; i--) {
-            while (x.forward.get(i) != NIL && 
-                   x.forward.get(i).key.compareTo(key) < 0) {
+            while (x.forward[i] != null && 
+                   x.forward[i].key.compareTo(key) < 0) {
                 
-                x = x.forward.get(i);
+                x = x.forward[i];
             }
             
-            update.set(i, x);
+            update[i] = x;
         }
         
-        x = x.forward.get(0);
+        x = x.forward[0];
         
         if (x.key != null && x.key.compareTo(key) == 0) {
             V oldValue = x.value;
@@ -184,7 +167,7 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
         
         if (newNumberOfLevels > numberOfLevels) {
             for (int i = numberOfLevels; i < newNumberOfLevels; i++) {
-                update.set(i, header);
+                update[i] = header;
             }
             
             numberOfLevels = newNumberOfLevels;
@@ -193,8 +176,8 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
         x = new SkipListMapNode<>(key, value, numberOfLevels);
         
         for (int i = 0; i < numberOfLevels; i++) {
-            x.forward.set(i, update.get(i).forward.get(i));
-            update.get(i).forward.set(i, x);
+            x.forward[i] = update[i].forward[i];
+            update[i].forward[i] = x;
         }
         
         size++;
@@ -203,41 +186,35 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
 
     @Override
     public V remove(Object key) {
-        List<SkipListMapNode<K, V>> update = new ArrayList<>(MAXIMUM_LEVELS);
-        
-        for (int i = 0; i < MAXIMUM_LEVELS; i++) {
-            update.add(null);
-        }
-        
+        SkipListMapNode<K, V>[] update = new SkipListMapNode[MAXIMUM_LEVELS];
         SkipListMapNode<K, V> x = header;
         
         for (int i = numberOfLevels - 1; i >= 0; i--) {
-            while (x.forward.get(i) != NIL && 
-                   x.forward.get(i).key.compareTo((K) key) < 0) {
+            while (x.forward[i] != null && 
+                   x.forward[i].key.compareTo((K) key) < 0) {
                 
-                x = x.forward.get(i);
+                x = x.forward[i];
             }
             
-            update.set(i, x);
+            update[i] = x;
         }
         
-        x = x.forward.get(0);
+        x = x.forward[0];
         
         if (x.key == null || !x.key.equals(key)) {
             return null;
         }
         
         for (int i = 0; i < numberOfLevels; i++) {
-            if (!update.get(i).forward.get(i).equals(x)) {
+            if (!update[i].forward[i].equals(x)) {
                 break;
             }
             
-            update.get(i).forward.set(i, x.forward.get(i));
+            update[i].forward[i] = x.forward[i];
         }
         
         while (numberOfLevels > 1 
-                && header.forward.get(numberOfLevels - 1).equals(NIL)) {
-            
+                && header.forward[numberOfLevels - 1] == null) {
             numberOfLevels--;
         }
         
@@ -400,21 +377,21 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
     
     private SkipListMapNode<K, V> accessNode(K searchKey) {
         Objects.requireNonNull(searchKey, "The input search key is null.");
-        SkipListMapNode<K, V> x = this.header;
+        SkipListMapNode<K, V> x = header;
         
-        for (int i = this.numberOfLevels - 1; i >= 0; i--) {
-            while (!x.forward.get(i).equals(NIL) && 
-                    x.forward.get(i).key.compareTo(searchKey) < 0) {
+        for (int i = numberOfLevels - 1; i >= 0; i--) {
+            while (x.forward[i] != null && 
+                   x.forward[i].key.compareTo(searchKey) < 0) {
                 
-                x = x.forward.get(i);
+                x = x.forward[i];
             }
         }
         
-        if (x.forward.get(0).key == null) {
+        if (x.forward[0].key == null) {
             return null;
         }
         
-        x = x.forward.get(0);
+        x = x.forward[0];
         
         if (x.key.compareTo(searchKey) == 0) {
             return x;
@@ -427,10 +404,14 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
         int newNumberOfLevels = 1;
         
         while (random.nextDouble() < p) {
+            if (newNumberOfLevels == MAXIMUM_LEVELS) {
+                return MAXIMUM_LEVELS;
+            }
+            
             newNumberOfLevels++;
         }
         
-        return Math.min(newNumberOfLevels, MAXIMUM_LEVELS);
+        return newNumberOfLevels;
     }
     
     private double validateCoinProbability(double p) {
