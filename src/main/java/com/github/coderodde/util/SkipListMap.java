@@ -156,7 +156,7 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
         List<SkipListMapNode<K, V>> update = new ArrayList<>(MAXIMUM_LEVELS);
         
         for (int i = 0; i < MAXIMUM_LEVELS; i++) {
-            update.add(NIL);
+            update.add(null);
         }
         
         SkipListMapNode<K, V> x = header;
@@ -182,17 +182,17 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
         // Insert the unpresent key:
         int newNumberOfLevels = getRandomNumberOfLevels();
         
-        if (newNumberOfLevels > this.numberOfLevels) {
-            for (int i = this.numberOfLevels; i < newNumberOfLevels; i++) {
-                update.set(i, this.header);
+        if (newNumberOfLevels > numberOfLevels) {
+            for (int i = numberOfLevels; i < newNumberOfLevels; i++) {
+                update.set(i, header);
             }
             
-            this.numberOfLevels = newNumberOfLevels;
+            numberOfLevels = newNumberOfLevels;
         }
         
-        x = new SkipListMapNode<>(key, value, this.numberOfLevels);
+        x = new SkipListMapNode<>(key, value, numberOfLevels);
         
-        for (int i = 0; i < this.numberOfLevels; i++) {
+        for (int i = 0; i < numberOfLevels; i++) {
             x.forward.set(i, update.get(i).forward.get(i));
             update.get(i).forward.set(i, x);
         }
@@ -235,8 +235,9 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
             update.get(i).forward.set(i, x.forward.get(i));
         }
         
-        while (numberOfLevels > 1) {
-            header.forward.set(numberOfLevels, NIL);
+        while (numberOfLevels > 1 
+                && header.forward.get(numberOfLevels - 1).equals(NIL)) {
+            
             numberOfLevels--;
         }
         
