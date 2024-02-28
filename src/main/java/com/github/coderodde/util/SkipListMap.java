@@ -200,12 +200,51 @@ public final class SkipListMap<K extends Comparable<? super K>, V> implements So
 
     @Override
     public V remove(Object key) {
-        return null;
+        List<SkipListMapNode<K, V>> update = new ArrayList<>(MAXIMUM_LEVEL);
+        
+        for (int i = 0; i < MAXIMUM_LEVEL; i++) {
+            update.add(null);
+        }
+        
+        SkipListMapNode<K, V> x = header;
+        
+        for (int i = levels - 1; i >= 0; i--) {
+            while (x.forward.get(i) != NIL && 
+                   x.forward.get(i).key.compareTo((K) key) < 0) {
+                
+                x = x.forward.get(i);
+            }
+            
+            update.set(i, x);
+        }
+        
+        x = x.forward.get(0);
+        
+        if (x.key == null || !x.key.equals(key)) {
+            return null;
+        }
+        
+        for (int i = 0; i < levels; i++) {
+            if (!update.get(i).forward.get(i).equals(x)) {
+                break;
+            }
+            
+            update.get(i).forward.set(i, x.forward.get(i));
+        }
+        
+        while (levels > 1) {
+            header.forward.set(levels, NIL);
+            levels--;
+        }
+        
+        return x.value;
     }
 
     @Override
     public void clear() {
         size = 0;
+        levels = 1;
+        header = new SkipListMapNode<>(null, null, MAXIMUM_LEVEL);
     }
 
     @Override
