@@ -94,9 +94,10 @@ public final class SkipListMapTest {
         Random random = new Random(13L);
         Map<Integer, Long> skipListMap = new SkipListMap<>(random);
         Map<Integer, Long> treeMap = new TreeMap<>();
-        List<Integer> list = new ArrayList<>();
+        List<Integer> presentList = new ArrayList<>();
+        List<Integer> missingList = new ArrayList<>();
         
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 10; i++) {
             assertFalse(skipListMap.containsKey(i));
             assertFalse(treeMap.containsKey(i));
             assertNull(skipListMap.get(i));
@@ -106,39 +107,49 @@ public final class SkipListMapTest {
         }
         
         for (int i = 0; i < 50; i++) {
-            list.add(i);
+            presentList.add(2 * i);
+            missingList.add(2 * i + 1);
         }
         
-        Collections.shuffle(list, random);
+        Collections.shuffle(presentList, random);
         
-        for (Integer key : list) {
+        for (Integer key : presentList) {
             long value = key;
-            skipListMap.put(key, value);
-            treeMap.put(key, value);
+            assertNull(skipListMap.put(key, value));
+            assertNull(treeMap.put(key, value));
         }
         
-        Collections.shuffle(list, random);
+        Collections.shuffle(presentList, random);
         
-        for (Integer key : list) {
+        for (Integer key : presentList) {
             Long value1 = skipListMap.get(key);
             Long value2 = treeMap.get(key);
             assertTrue(Objects.equals(value1, value2));
         }
         
-        Collections.shuffle(list, random);
-        int i = 1;
+        for (Integer key : missingList) {
+            assertFalse(skipListMap.containsKey(key));
+            assertFalse(treeMap.containsKey(key));
+            assertNull(skipListMap.get(key));
+            assertNull(treeMap.get(key));
+            assertNull(skipListMap.remove(key));
+            assertNull(treeMap.remove(key));
+        }
         
-        Iterator<Integer> iterator = list.iterator();
+        Collections.shuffle(presentList, random);
+        
+        Iterator<Integer> iterator = presentList.iterator();
         
         while (iterator.hasNext()) {
             Integer key = iterator.next();
             
             Long value1 = skipListMap.remove(key);
             Long value2 = treeMap.remove(key);
+            
             iterator.remove();
             
             assertEquals(value2, value1);
-            assertTrue(equals(skipListMap, treeMap, list));
+            assertTrue(equals(skipListMap, treeMap, presentList));
             
         }
     }

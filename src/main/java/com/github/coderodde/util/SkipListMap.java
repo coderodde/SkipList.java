@@ -14,16 +14,11 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class SkipListMap<K extends Comparable<? super K>, V> implements SortedMap<K, V> {
-
-    /**
-     * The maximum level of this skip list.
-     */
-    private static final int MAXIMUM_LEVEL = 20;
     
     /**
      * The default coin probability.
      */
-    private static final double DEFAULT_P = 0.25;
+    public static final double DEFAULT_P = 0.25;
     
     /**
      * The minimum coin probability;
@@ -34,6 +29,11 @@ public final class SkipListMap<K extends Comparable<? super K>, V> implements So
      * The maximum coin probability;
      */
     private static final double MAXIMUM_P = 0.9;
+
+    /**
+     * The maximum level of this skip list.
+     */
+    private static final int MAXIMUM_LEVEL = 20;
     
     /**
      * Implements the actual skip list node.
