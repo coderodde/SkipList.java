@@ -195,6 +195,7 @@ public final class SkipListMap<K extends Comparable<? super K>, V> implements So
             update.get(i).forward.set(i, x);
         }
         
+        size++;
         return null;
     }
 
@@ -237,6 +238,7 @@ public final class SkipListMap<K extends Comparable<? super K>, V> implements So
             levels--;
         }
         
+        size--;
         return x.value;
     }
 
