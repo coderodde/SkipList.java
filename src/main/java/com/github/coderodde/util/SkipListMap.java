@@ -1,9 +1,7 @@
 package com.github.coderodde.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -34,7 +32,7 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
     /**
      * The maximum level of this skip list.
      */
-    private static final int MAXIMUM_LEVELS = 20;
+    private static final int MAXIMUM_NUMBER_OF_LEVELS = 20;
     
     /**
      * Implements the actual skip list node.
@@ -79,7 +77,14 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
     private SkipListMapNode<K, V> header = 
             new SkipListMapNode<>(null, 
                                   null,
-                                  MAXIMUM_LEVELS);
+                                  MAXIMUM_NUMBER_OF_LEVELS);
+    
+    /**
+     * Used in {@link #put(java.lang.Comparable, java.lang.Object)} and 
+     * {@link #remove(java.lang.Object)}.
+     */
+    private SkipListMapNode<K, V>[] update = 
+        new SkipListMapNode[MAXIMUM_NUMBER_OF_LEVELS];
     
     /**
      * The random number generator.
@@ -143,7 +148,6 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
     public V put(K key, V value) {
         
         SkipListMapNode<K, V> x = header;
-        SkipListMapNode<K, V>[] update = new SkipListMapNode[MAXIMUM_LEVELS];
         
         for (int i = numberOfLevels - 1; i >= 0; i--) {
             while (x.forward[i] != null && 
@@ -189,7 +193,6 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
     public V remove(Object key) {
         
         SkipListMapNode<K, V> x = header;
-        SkipListMapNode<K, V>[] update = new SkipListMapNode[MAXIMUM_LEVELS];
         
         for (int i = numberOfLevels - 1; i >= 0; i--) {
             while (x.forward[i] != null && 
@@ -229,7 +232,7 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
     public void clear() {
         size = 0;
         numberOfLevels = 1;
-        header = new SkipListMapNode<>(null, null, MAXIMUM_LEVELS);
+        header = new SkipListMapNode<>(null, null, MAXIMUM_NUMBER_OF_LEVELS);
     }
 
     @Override
@@ -404,8 +407,8 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
         int newNumberOfLevels = 1;
         
         while (random.nextDouble() < p) {
-            if (newNumberOfLevels == MAXIMUM_LEVELS) {
-                return MAXIMUM_LEVELS;
+            if (newNumberOfLevels == MAXIMUM_NUMBER_OF_LEVELS) {
+                return MAXIMUM_NUMBER_OF_LEVELS;
             }
             
             newNumberOfLevels++;

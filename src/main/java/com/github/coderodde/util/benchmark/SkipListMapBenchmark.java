@@ -14,7 +14,7 @@ public final class SkipListMapBenchmark {
     public static void main(String[] args) {
         long seed = parseSeed(args);
         double coinProbability = parseCoinProbability(args);
-        coinProbability = 0.7;
+        coinProbability = 0.25;
         seed = 1709125105008L;
         System.out.printf("Seed = %d.\n", seed);
         System.out.printf("Coin probability = %f.\n", coinProbability);
