@@ -208,7 +208,8 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
         }
         
         for (int i = 0; i < numberOfLevels; i++) {
-            if (!update[i].forward[i].equals(x)) {
+            if (update[i].forward[i] == null || 
+               !update[i].forward[i].equals(x)) {
                 break;
             }
             
