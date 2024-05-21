@@ -33,8 +33,21 @@ public final class SkipList<K extends Comparable<? super K>> {
         }
     }
     
-    private final Random random = new Random();
+    private final Random random = new Random(13);
     private Index<K> head;
+    private int size;
+    
+    public boolean add(K key) {
+        return doPut(key);
+    }
+    
+    public boolean remove(K key) {
+        return doRemove(key);
+    }
+    
+    public boolean contains(K key) {
+        return doGet(key);
+    }
     
     private boolean doGet(Object key) {
         Index<K> q;
@@ -108,8 +121,8 @@ public final class SkipList<K extends Comparable<? super K>> {
             int levels = 0;
             
             if ((h = head) == null) {
-                Node<K> base = new Node<K>(null, null);
-                h = new Index<K>(base, null, null);
+                Node<K> base = new Node<>(null, null);
+                h = new Index<>(base, null, null);
                 
                 if (head == null) {
                     head = h;
@@ -124,8 +137,8 @@ public final class SkipList<K extends Comparable<? super K>> {
                         K k;
                         
                         if ((p = r.node) == null || (k = p.key) == null) {
-                            if (q == r) {
-                                q = r.right;
+                            if (q.right == r) {
+                                q.right = r.right;
                             }
                         } else if (((K) key).compareTo(k) > 0) {
                             q = r;
@@ -160,12 +173,14 @@ public final class SkipList<K extends Comparable<? super K>> {
                     } else if ((c = ((K) key).compareTo(k)) > 0) {
                         b = n;
                     } else if (c == 0) {
-                        return true;
+                        // Once here, we are trying to insert a key that is 
+                        // already in this skip list. Return false:
+                        return false;
                     }
                     
                     if (c < 0) {
                         if (b.next == n) {
-                            b.next = (p = new Node<K>(key, n));
+                            b.next = (p = new Node<>(key, n));
                             z = p;
                             break;
                         }
@@ -182,19 +197,27 @@ public final class SkipList<K extends Comparable<? super K>> {
                         Index<K> x = null;
                         
                         for (;;) {
-                            x = new Index<K>(z, x, null);
+                            x = new Index<>(z, x, null);
+                            System.out.println("rnd = " + Long.toBinaryString(rnd));
                             
                             if (rnd >= 0L || --skips < 0) {
                                 break;
                             } else {
                                 rnd <<= 1;
                             }
+                        }
+                        
+                        if (addIndices(h, skips, x) && skips < 0 && head == h) {
+                            Index<K> hx = new Index<>(z, x, null);
+                            Index<K> nh = new Index<>(h.node, h, hx);
                             
-                            if (addIndices(h, skips, x) && skips < 0 && head == h) {
-                                
+                            if (head == h) {
+                                head = nh;
                             }
                         }
                     }
+                    
+                    return true;
                 }
             }
         }
@@ -247,7 +270,7 @@ public final class SkipList<K extends Comparable<? super K>> {
                         
                         break;
                     } else {
-                        x.right = x;
+                        x.right = r;
 
                         if (q.right == r) {
                             q.right = x;
@@ -262,10 +285,98 @@ public final class SkipList<K extends Comparable<? super K>> {
         
         return false;
     }
-
+    
     private boolean doRemove(Object key) {
         if (key == null) {
             throw new NullPointerException();
+        }
+        
+        boolean result = false;
+        Node<K> b;
+        
+        outer:
+        while ((b = findPredecessor(key)) != null && result == false) {
+            
+            for (;;) {
+                Node<K> n;
+                K k;
+                int c;
+                
+                if ((n = b.next) == null) {
+                    break outer;
+                } else if ((k = n.key) == null) {
+                    break;
+                } else if ((c = ((K) key).compareTo(k)) > 0) {
+                    b = n;
+                } else if (c < 0) {
+                    break outer;
+                } 
+            }
+        }
+        
+        if (result) {
+            tryReduceLevel();
+            size--;
+        }
+        
+        return result;
+    }
+    
+    private Node<K> findPredecessor(Object key) {
+        Index<K> q;
+        
+        if ((q = head) == null || key == null) {
+            return null;
+        }
+        
+        for (Index<K> r, d;;) {
+            while ((r = q.right) != null) {
+                Node<K> p;
+                K k;
+                
+                if ((p = r.node) == null || (k = p.key) == null) {
+                    if (q.right == r) {
+                        q.right = r.right;
+                    }
+                } else if (((K) key).compareTo(k) > 0) {
+                    q = r;
+                } else {
+                    break;
+                }
+            }
+            
+            if ((d = q.down) != null) {
+                q = d;
+            } else {
+                return q.node;
+            }
+        }
+    }
+    
+    private void tryReduceLevel() {
+        Index<K> h;
+        Index<K> d;
+        Index<K> e;
+        
+        if ((h = head) != null 
+                && h.right == null
+                && (d = h.down) != null
+                && d.right == null 
+                && (e = d.down) != null
+                && e.right == null) {
+            
+            boolean b = false;
+            
+            if (head == h) {
+                head = d;
+                b = true;
+            }
+            
+            if (b && h.right != null) {
+                if (head == d) {
+                    head = h;
+                }
+            }
         }
     }
 }
