@@ -1,5 +1,7 @@
 package com.github.coderodde.util;
 
+import java.util.Random;
+
 /**
  * This class implements the most fundamental operations on skip lists.
  * 
@@ -31,6 +33,7 @@ public final class SkipList<K extends Comparable<? super K>> {
         }
     }
     
+    private final Random random = new Random();
     private Index<K> head;
     
     private boolean doGet(Object key) {
@@ -92,5 +95,168 @@ public final class SkipList<K extends Comparable<? super K>> {
         }
         
         return result;
+    }
+    
+    private boolean doPut(K key) {
+        if (key == null) {
+            throw new NullPointerException();
+        }
+        
+        for (;;) {
+            Index<K> h;
+            Node<K> b;
+            int levels = 0;
+            
+            if ((h = head) == null) {
+                Node<K> base = new Node<K>(null, null);
+                h = new Index<K>(base, null, null);
+                
+                if (head == null) {
+                    head = h;
+                    b = base;
+                } else {
+                    b = null;
+                }
+            } else {
+                for (Index<K> q = h, r, d;;) {
+                    while ((r = q.right) != null) {
+                        Node<K> p;
+                        K k;
+                        
+                        if ((p = r.node) == null || (k = p.key) == null) {
+                            if (q == r) {
+                                q = r.right;
+                            }
+                        } else if (((K) key).compareTo(k) > 0) {
+                            q = r;
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    if ((d = q.down) != null) {
+                        ++levels;
+                        q = d;
+                    } else {
+                        b = q.node;
+                        break;
+                    }
+                }
+            }
+            
+            if (b != null) {
+                Node<K> z = null;
+                
+                for (;;) {
+                    Node<K> n, p;
+                    K k;
+                    int c;
+                    
+                    if ((n = b.next) == null) {
+                        c = -1;
+                    } else if ((k = n.key) == null) {
+                        // See line 643 in CSLM.java:
+                        break;
+                    } else if ((c = ((K) key).compareTo(k)) > 0) {
+                        b = n;
+                    } else if (c == 0) {
+                        return true;
+                    }
+                    
+                    if (c < 0) {
+                        if (b.next == n) {
+                            b.next = (p = new Node<K>(key, n));
+                            z = p;
+                            break;
+                        }
+                    }
+                }
+                
+                if (z != null) {
+                    int lr = random.nextInt();
+                    
+                    if ((lr & 0x3) == 0) {
+                        int hr = random.nextInt();
+                        long rnd = ((long)hr << 32) | ((long)lr & 0xffffffffL);
+                        int skips = levels;
+                        Index<K> x = null;
+                        
+                        for (;;) {
+                            x = new Index<K>(z, x, null);
+                            
+                            if (rnd >= 0L || --skips < 0) {
+                                break;
+                            } else {
+                                rnd <<= 1;
+                            }
+                            
+                            if (addIndices(h, skips, x) && skips < 0 && head == h) {
+                                
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    static <K> boolean addIndices(Index<K> q, int skips, Index<K> x) {
+        Node<K> z;
+        K key;
+
+        if (x != null 
+                && (z = x.node) != null
+                && (key = z.key) != null
+                && q != null) {
+
+            boolean retrying = false;
+
+            for (;;) {
+                Index<K> r, d;
+                int c;
+
+                if ((r = q.right) != null) {
+                    Node<K> p;
+                    K k;
+
+                    if ((p = r.node) == null || (k = p.key) == null) {
+                        if (q.right == r) {
+                            q.right = r.right;
+                        }
+
+                        c = 0;
+                    } else if (
+                            (c = ((Comparable<K>) key).compareTo(k))
+                            > 0) {
+
+                        q = r;
+                    } else if (c == 0) {
+                        break;
+                    }
+                } else {
+                    c = -1;
+                }
+
+                if (c < 0) {
+                    if ((d = q.down) != null && skips > 0) {
+                        --skips;
+                        q = d;
+                    } else if (d != null && !retrying && !addIndices(d, 0, x.down)) {
+                        break;
+                    } else {
+                        x.right = x;
+
+                        if (q.right == r) {
+                            q.right = x;
+                            return true;
+                        } else {
+                            retrying = true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return false;
     }
 }
