@@ -121,8 +121,8 @@ public final class SkipList<K extends Comparable<? super K>> {
             int levels = 0;
             
             if ((h = head) == null) {
-                Node<K> base = new Node<K>(null, null);
-                h = new Index<K>(base, null, null);
+                Node<K> base = new Node<>(null, null);
+                h = new Index<>(base, null, null);
                 
                 if (head == null) {
                     head = h;
@@ -137,8 +137,8 @@ public final class SkipList<K extends Comparable<? super K>> {
                         K k;
                         
                         if ((p = r.node) == null || (k = p.key) == null) {
-                            if (q == r) {
-                                q = r.right;
+                            if (q.right == r) {
+                                q.right = r.right;
                             }
                         } else if (((K) key).compareTo(k) > 0) {
                             q = r;
@@ -178,7 +178,7 @@ public final class SkipList<K extends Comparable<? super K>> {
                     
                     if (c < 0) {
                         if (b.next == n) {
-                            b.next = (p = new Node<K>(key, n));
+                            b.next = (p = new Node<>(key, n));
                             z = p;
                             break;
                         }
@@ -195,7 +195,7 @@ public final class SkipList<K extends Comparable<? super K>> {
                         Index<K> x = null;
                         
                         for (;;) {
-                            x = new Index<K>(z, x, null);
+                            x = new Index<>(z, x, null);
                             
                             if (rnd >= 0L || --skips < 0) {
                                 break;
@@ -203,11 +203,21 @@ public final class SkipList<K extends Comparable<? super K>> {
                                 rnd <<= 1;
                             }
                             
-                            if (addIndices(h, skips, x) && skips < 0 && head == h) {
-                                
+                        }
+                        
+                        if (addIndices(h, skips, x) && skips < 0 && head == h) {
+                            Index<K> hx = new Index<>(z, x, null);
+                            Index<K> nh = new Index<>(h.node, h, hx);
+                            
+                            if (head == h) {
+                                head = nh;
                             }
                         }
+                        
+                        return findPredecessor(key) != null;
                     }
+                    
+                    return true;
                 }
             }
         }
