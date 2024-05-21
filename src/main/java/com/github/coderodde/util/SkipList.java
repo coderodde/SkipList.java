@@ -49,6 +49,14 @@ public final class SkipList<K extends Comparable<? super K>> {
         return doGet(key);
     }
     
+    public int size() {
+        return size;
+    }
+    
+    public boolean isEmpty() {
+        return size == 0;
+    }
+    
     private boolean doGet(Object key) {
         Index<K> q;
         
@@ -217,6 +225,7 @@ public final class SkipList<K extends Comparable<? super K>> {
                         }
                     }
                     
+                    size++;
                     return true;
                 }
             }
@@ -310,7 +319,11 @@ public final class SkipList<K extends Comparable<? super K>> {
                     b = n;
                 } else if (c < 0) {
                     break outer;
-                } 
+                } else if (!result) {
+                    result = true;
+                    unlinkNode(b, n);
+                    break;
+                }
             }
         }
         
@@ -365,17 +378,33 @@ public final class SkipList<K extends Comparable<? super K>> {
                 && (e = d.down) != null
                 && e.right == null) {
             
-            boolean b = false;
-            
             if (head == h) {
                 head = d;
-                b = true;
-            }
-            
-            if (b && h.right != null) {
+                
                 if (head == d) {
                     head = h;
                 }
+            }
+        }
+    }
+    
+    private static <K> void unlinkNode(Node<K> b, Node<K> n) {
+        if (b != null && n != null) {
+            Node<K> f, p;
+            
+            for (;;) {
+                if ((f = n.next) != null && f.key == null) {
+                    p = f.next;
+                    break;
+                } else if (n.next == f) {
+                    n.next = new Node<>(null, f);
+                    p = f;
+                    break;
+                }
+            }
+            
+            if (b.next == n) {
+                b.next = p;
             }
         }
     }
