@@ -67,11 +67,26 @@ public final class SkipList<K extends Comparable<? super K>> {
                 if ((d = q.down) != null) {
                     q = d;
                 } else {
-                    Node<K> n;
+                    Node<K> b, n;
                     
                     if ((b = q.node) != null) {
-                        
+                        while ((n = b.next) != null) {
+                            int c;
+                            K k = n.key;
+                            
+                            if (k == null || (c = ((K) key).compareTo(k)) > 0) {
+                                b = n;
+                            } else {
+                                if (c == 0) {
+                                    result = true;
+                                }
+                                
+                                break;
+                            }
+                        }
                     }
+                    
+                    break;
                 }
             }
         }
