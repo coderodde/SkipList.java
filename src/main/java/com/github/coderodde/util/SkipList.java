@@ -35,6 +35,19 @@ public final class SkipList<K extends Comparable<? super K>> {
     
     private final Random random = new Random();
     private Index<K> head;
+    private int size;
+    
+    public boolean add(K key) {
+        return doPut(key);
+    }
+    
+    public boolean remove(K key) {
+        return doRemove(key);
+    }
+    
+    public boolean contains(K key) {
+        return doGet(key);
+    }
     
     private boolean doGet(Object key) {
         Index<K> q;
@@ -258,5 +271,99 @@ public final class SkipList<K extends Comparable<? super K>> {
         }
         
         return false;
+    }
+    
+    private boolean doRemove(Object key) {
+        if (key == null) {
+            throw new NullPointerException();
+        }
+        
+        boolean result = false;
+        Node<K> b;
+        
+        outer:
+        while ((b = findPredecessor(key)) != null && result == false) {
+            
+            for (;;) {
+                Node<K> n;
+                K k;
+                int c;
+                
+                if ((n = b.next) == null) {
+                    break outer;
+                } else if ((k = n.key) == null) {
+                    break;
+                } else if ((c = ((K) key).compareTo(k)) > 0) {
+                    b = n;
+                } else if (c < 0) {
+                    break outer;
+                } 
+            }
+        }
+        
+        if (result) {
+            tryReduceLevel();
+            size--;
+        }
+        
+        return result;
+    }
+    
+    private Node<K> findPredecessor(Object key) {
+        Index<K> q;
+        
+        if ((q = head) == null || key == null) {
+            return null;
+        }
+        
+        for (Index<K> r, d;;) {
+            while ((r = q.right) != null) {
+                Node<K> p;
+                K k;
+                
+                if ((p = r.node) == null || (k = p.key) == null) {
+                    if (q.right == r) {
+                        q.right = r.right;
+                    }
+                } else if (((K) key).compareTo(k) > 0) {
+                    q = r;
+                } else {
+                    break;
+                }
+            }
+            
+            if ((d = q.down) != null) {
+                q = d;
+            } else {
+                return q.node;
+            }
+        }
+    }
+    
+    private void tryReduceLevel() {
+        Index<K> h;
+        Index<K> d;
+        Index<K> e;
+        
+        if ((h = head) != null 
+                && h.right == null
+                && (d = h.down) != null
+                && d.right == null 
+                && (e = d.down) != null
+                && e.right == null) {
+            
+            boolean b = false;
+            
+            if (head == h) {
+                head = d;
+                b = true;
+            }
+            
+            if (b && h.right != null) {
+                if (head == d) {
+                    head = h;
+                }
+            }
+        }
     }
 }
