@@ -241,7 +241,10 @@ public final class SkipList<K extends Comparable<? super K>> {
                     if ((d = q.down) != null && skips > 0) {
                         --skips;
                         q = d;
-                    } else if (d != null && !retrying && !addIndices(d, 0, x.down)) {
+                    } else if (d != null 
+                            && !retrying 
+                            && !addIndices(d, 0, x.down)) {
+                        
                         break;
                     } else {
                         x.right = x;
@@ -258,5 +261,11 @@ public final class SkipList<K extends Comparable<? super K>> {
         }
         
         return false;
+    }
+
+    private boolean doRemove(Object key) {
+        if (key == null) {
+            throw new NullPointerException();
+        }
     }
 }
