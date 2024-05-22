@@ -319,13 +319,15 @@ public final class SkipList<K extends Comparable<? super K>> {
                     b = n;
                 } else if (c < 0) {
                     break outer;
-                } else if (!result) {
+                } else {
                     result = true;
                     unlinkNode(b, n);
                     break;
                 }
             }
         }
+        
+        System.out.println("result = " + result);
         
         if (result) {
             tryReduceLevel();
@@ -348,9 +350,9 @@ public final class SkipList<K extends Comparable<? super K>> {
                 K k;
                 
                 if ((p = r.node) == null || (k = p.key) == null) {
-                    if (q.right == r) {
-                        q.right = r.right;
-                    }
+                    q.right = r.right;
+//                    if (q.right == r) {
+//                    }
                 } else if (((K) key).compareTo(k) > 0) {
                     q = r;
                 } else {
@@ -371,20 +373,14 @@ public final class SkipList<K extends Comparable<? super K>> {
         Index<K> d;
         Index<K> e;
         
-        if ((h = head) != null 
-                && h.right == null
-                && (d = h.down) != null
-                && d.right == null 
-                && (e = d.down) != null
-                && e.right == null) {
+        if ((h = head) != null && h.right == null &&
+            (d = h.down) != null && d.right == null &&
+            (e = d.down) != null && e.right == null) {
             
-            if (head == h) {
-                head = d;
-                
-                if (head == d) {
-                    head = h;
-                }
-            }
+            head = d;
+            System.out.println("hello");
+        } else {
+            System.out.println("bye");
         }
     }
     

@@ -65,9 +65,10 @@ public class SkipListTest {
         assertFalse(list.remove(0));
         
         assertTrue(list.remove(3));
-        System.out.println("yes");
         assertTrue(list.remove(2));
+        System.out.println("yes");
         assertTrue(list.remove(4));
+        System.out.println("no");
         assertTrue(list.remove(1));
         
         
