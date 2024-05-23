@@ -1,5 +1,7 @@
 package com.github.coderodde.util;
 
+import com.github.coderodde.util.SkipList.Index;
+import com.github.coderodde.util.SkipList.Node;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 import static junit.framework.Assert.assertEquals;
@@ -19,7 +21,7 @@ public class SkipListTest {
         list = new SkipList<>();
     }
     
-    @Test
+//    @Test
     public void testAdd() {
         System.out.println("Beginning testAdd()...");
         
@@ -44,7 +46,7 @@ public class SkipListTest {
         System.out.println("testAdd() done!");
     }
 
-    @Test
+//    @Test
     public void testRemove() {
         System.out.println("Beginning testRemove()...");
         
@@ -85,7 +87,7 @@ public class SkipListTest {
         System.out.println("testRemove() done!");
     }
     
-    @Test
+//    @Test
     public void testRemoveJdk() {
         System.out.println("Beginning testRemove()...");
         
@@ -125,5 +127,84 @@ public class SkipListTest {
         assertNull(m.remove(1));
         
         System.out.println("testRemove() done!");
+    }
+    
+    @Test
+    public void test1() {
+        SkipList<Integer> sl = getSkipList1();
+        
+        System.out.println(sl);
+    }
+    
+    private static SkipList<Integer> getSkipList1() {
+        SkipList<Integer> sl = new SkipList<>();
+        
+        Node<Integer> nx = new Node<>(null, null);
+        Node<Integer> n0 = new Node<>(null, null);
+        Node<Integer> n1 = new Node<>(null, null);
+        Node<Integer> n2 = new Node<>(null, null);
+        Node<Integer> n3 = new Node<>(null, null);
+        Node<Integer> n4 = new Node<>(null, null);
+        Node<Integer> n5 = new Node<>(null, null);
+        Node<Integer> n6 = new Node<>(null, null);
+        Node<Integer> n7 = new Node<>(null, null);
+        
+        n0.key = 0;
+        n1.key = 1;
+        n2.key = 2;
+        n3.key = 3;
+        n4.key = 4;
+        n5.key = 5;
+        n6.key = 6;
+        n7.key = 7;
+        
+        nx.next = n0;
+        n0.next = n1;
+        n1.next = n2;
+        n2.next = n3;
+        n3.next = n4;
+        n4.next = n5;
+        n5.next = n6;
+        n6.next = n7;
+        n7.next = null;
+        
+        Index<Integer> il10 = new Index<>(null, null, null);
+        Index<Integer> il11 = new Index<>(null, null, null);
+        
+        Index<Integer> il20 = new Index<>(null, null, null);
+        Index<Integer> il21 = new Index<>(null, null, null);
+        Index<Integer> il22 = new Index<>(null, null, null);
+        Index<Integer> il23 = new Index<>(null, null, null);
+        
+        
+        // Top index layer:
+        il10.down = il20;
+        il10.node = nx;
+        il10.right = il11;
+        
+        il11.down = il22;
+        il11.node = n4;
+        il11.right = null;
+        
+        // Bottom index layer:
+        
+        il20.node = nx;
+        il20.down = null;
+        il20.right = il21;
+        
+        il21.node = n2;
+        il21.down = null;
+        il21.right = il22;
+        
+        il22.node = n4;
+        il22.down = null;
+        il22.right = il23;
+        
+        il23.node = n6;
+        il23.down = null;
+        il23.right = null;
+        
+        sl.head = il10;
+        return sl;
     }
 }

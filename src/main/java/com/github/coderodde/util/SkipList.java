@@ -11,9 +11,9 @@ import java.util.Random;
  */
 public final class SkipList<K extends Comparable<? super K>> {
 
-    private static final class Node<K> {
-        final K key;
-        Node<K> next;
+    static final class Node<K> {
+        public K key;
+        public Node<K> next;
         
         Node(K key, Node<K> next) {
             this.key = key;
@@ -21,9 +21,9 @@ public final class SkipList<K extends Comparable<? super K>> {
         }
     }
     
-    private static final class Index<K> {
-        final Node<K> node;
-        final Index<K> down;
+    static final class Index<K> {
+        Node<K> node;
+        Index<K> down;
         Index<K> right;
         
         Index(Node<K> node, Index<K> down, Index<K> right) {
@@ -34,7 +34,7 @@ public final class SkipList<K extends Comparable<? super K>> {
     }
     
     private final Random random = new Random(13);
-    private Index<K> head;
+    Index<K> head;
     private int size;
     
     public boolean add(K key) {
@@ -347,37 +347,53 @@ public final class SkipList<K extends Comparable<? super K>> {
         Index<K> currIndex = head;
         
         while (currIndex != null && currIndex.right != null) {
+            Node<K> node = currIndex.node;
+            
+            if (node.key != null) {
+                int cmp = node.key.compareTo((K) key);
+                
+                if (cmp == 0) {
+                    if (prevIndex == null) {
+                        head.node.next = head.node.next.next;
+                    } else {
+                        
+                    }
+                    
+                    return true;
+                }
+            }
             
             prevIndex = currIndex;
             currIndex = currIndex.right;
         }
         
-        Index<K> rightIndex = head.right;
-        
-        while 
-        
-        if (rightIndex == null) {
-            Node<K> prev = null, current = head.node;
-            
-            for (;;) {
-                int cmp = current.key.compareTo((K) key);
-                
-                if (cmp == 0) {
-                    prev.next = current.next;
-                    return true;
-                }
-                
-                if (cmp > 0) {
-                    return false;
-                }
-                
-                prev = current;
-            }
-        }
-        
-        for (;;) {
-            int cmp = 
-        }
+        return false;
+//        Index<K> rightIndex = head.right;
+//        
+//        while 
+//        
+//        if (rightIndex == null) {
+//            Node<K> prev = null, current = head.node;
+//            
+//            for (;;) {
+//                int cmp = current.key.compareTo((K) key);
+//                
+//                if (cmp == 0) {
+//                    prev.next = current.next;
+//                    return true;
+//                }
+//                
+//                if (cmp > 0) {
+//                    return false;
+//                }
+//                
+//                prev = current;
+//            }
+//        }
+//        
+//        for (;;) {
+//            int cmp = 
+//        }
     }
     
     private Node<K> findPredecessor(Object key) {
