@@ -337,6 +337,49 @@ public final class SkipList<K extends Comparable<? super K>> {
         return result;
     }
     
+    private boolean myDoRemove(Object key) {
+        if (size == 0) {
+            // Nothing to remove:
+            return false;
+        }
+        
+        Index<K> prevIndex = null;
+        Index<K> currIndex = head;
+        
+        while (currIndex != null && currIndex.right != null) {
+            
+            prevIndex = currIndex;
+            currIndex = currIndex.right;
+        }
+        
+        Index<K> rightIndex = head.right;
+        
+        while 
+        
+        if (rightIndex == null) {
+            Node<K> prev = null, current = head.node;
+            
+            for (;;) {
+                int cmp = current.key.compareTo((K) key);
+                
+                if (cmp == 0) {
+                    prev.next = current.next;
+                    return true;
+                }
+                
+                if (cmp > 0) {
+                    return false;
+                }
+                
+                prev = current;
+            }
+        }
+        
+        for (;;) {
+            int cmp = 
+        }
+    }
+    
     private Node<K> findPredecessor(Object key) {
         Index<K> q;
         
@@ -350,9 +393,9 @@ public final class SkipList<K extends Comparable<? super K>> {
                 K k;
                 
                 if ((p = r.node) == null || (k = p.key) == null) {
-                    q.right = r.right;
-//                    if (q.right == r) {
-//                    }
+                    if (q.right == r) {
+                        q.right = r.right;
+                    }
                 } else if (((K) key).compareTo(k) > 0) {
                     q = r;
                 } else {

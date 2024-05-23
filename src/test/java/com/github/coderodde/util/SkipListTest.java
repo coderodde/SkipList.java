@@ -1,6 +1,10 @@
 package com.github.coderodde.util;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,6 +12,7 @@ import org.junit.Test;
 public class SkipListTest {
 
     private SkipList<Integer> list;
+    private static final Object OBJECT = new Object();
     
     @Before
     public void before() {
@@ -76,6 +81,48 @@ public class SkipListTest {
         assertFalse(list.remove(2));
         assertFalse(list.remove(4));
         assertFalse(list.remove(1));
+        
+        System.out.println("testRemove() done!");
+    }
+    
+    @Test
+    public void testRemoveJdk() {
+        System.out.println("Beginning testRemove()...");
+        
+        Map<Integer, Object> m = new ConcurrentSkipListMap<>();
+       
+        m.remove(0);
+        
+        assertEquals(0, m.size());
+        
+        assertFalse(m.containsKey(1));
+        assertFalse(m.containsKey(2));
+        assertFalse(m.containsKey(3));
+        assertFalse(m.containsKey(4));
+        
+        m.put(3, OBJECT);
+        m.put(1, OBJECT);
+        m.put(4, OBJECT);
+        m.put(2, OBJECT);
+        
+        System.out.println(">>> Put all the elements!");
+        
+        assertTrue(m.containsKey(1));
+        assertTrue(m.containsKey(2));
+        assertTrue(m.containsKey(3));
+        assertTrue(m.containsKey(4));
+        
+        m.remove(0);
+        
+        m.remove(3);
+        m.remove(2);
+        m.remove(4);
+        m.remove(1);
+        
+        assertNull(m.remove(3));
+        assertNull(m.remove(2));
+        assertNull(m.remove(4));
+        assertNull(m.remove(1));
         
         System.out.println("testRemove() done!");
     }
