@@ -1,5 +1,6 @@
 package com.github.coderodde.util;
 
+import com.github.coderodde.util.SkipList.Index;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 import static junit.framework.Assert.assertEquals;
@@ -44,6 +45,18 @@ public class SkipListTest {
         System.out.println("testAdd() done!");
     }
 
+    @Test
+    public void testFindPredecessorIndex() {
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        
+        Index<Integer> index1 = list.findPredcessorIndex(1);
+        
+        assertEqua
+    }
+    
     @Test
     public void testRemove() {
         System.out.println("Beginning testRemove()...");
