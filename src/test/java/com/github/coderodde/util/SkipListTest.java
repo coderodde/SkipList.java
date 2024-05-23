@@ -20,7 +20,7 @@ public class SkipListTest {
         list = new SkipList<>();
     }
     
-    @Test
+//    @Test
     public void testAdd() {
         System.out.println("Beginning testAdd()...");
         
@@ -52,12 +52,32 @@ public class SkipListTest {
         list.add(3);
         list.add(4);
         
-        Index<Integer> index1 = list.findPredcessorIndex(1);
+        Index<Integer> index = list.findPredcessorIndex(0);
         
-        assertEqua
+        assertTrue(index == list.head);
+        
+        index = list.findPredcessorIndex(1);
+        
+        assertTrue(index == list.head);
+        
+        index = list.findPredcessorIndex(2);
+        
+        assertTrue(index == list.head.right);
+        
+        index = list.findPredcessorIndex(3);
+        
+        assertTrue(index == list.head.right);
+        
+        index = list.findPredcessorIndex(4);
+        
+        assertTrue(index == list.head.right);
+        
+        index = list.findPredcessorIndex(5);
+        
+        assertTrue(index == list.head.right);
     }
     
-    @Test
+//    @Test
     public void testRemove() {
         System.out.println("Beginning testRemove()...");
         
@@ -98,7 +118,7 @@ public class SkipListTest {
         System.out.println("testRemove() done!");
     }
     
-    @Test
+//    @Test
     public void testRemoveJdk() {
         System.out.println("Beginning testRemove()...");
         

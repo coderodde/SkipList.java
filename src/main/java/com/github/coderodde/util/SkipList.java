@@ -34,7 +34,7 @@ public final class SkipList<K extends Comparable<? super K>> {
     }
     
     private final Random random = new Random(13);
-    private Index<K> head;
+    public Index<K> head;
     private Index<K> previousIndex;
     private int size;
     
