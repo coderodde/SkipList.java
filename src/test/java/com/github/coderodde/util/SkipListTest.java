@@ -1,7 +1,12 @@
 package com.github.coderodde.util;
 
 import com.github.coderodde.util.SkipList.Index;
+import com.github.coderodde.util.SkipList.Node;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentSkipListMap;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -75,6 +80,19 @@ public class SkipListTest {
         index = list.findPredcessorIndex(5);
         
         assertTrue(index == list.head.right);
+    }
+    
+    @Test
+    public void doThat() {
+        SkipList<Integer> sl = new SkipList<>();
+        Node<Integer> l4 = new Node<>(7, null);
+        Node<Integer> l3 = new Node<>(6, l4);
+        Node<Integer> l2 = new Node<>(5, l3);
+        Node<Integer> l1 = new Node<>(4, l2);
+        Node<Integer> l4 = new Node<>(7, null);
+        Node<Integer> l4 = new Node<>(7, null);
+        Node<K> nnull = new Node<>();
+        Index<K> l4 = new 
     }
     
 //    @Test

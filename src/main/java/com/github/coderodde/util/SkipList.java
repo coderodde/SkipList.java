@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public final class SkipList<K extends Comparable<? super K>> {
 
-    private static final class Node<K> {
+    public static final class Node<K> {
         final K key;
         Node<K> next;
         
