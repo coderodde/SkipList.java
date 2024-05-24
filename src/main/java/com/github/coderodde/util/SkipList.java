@@ -577,7 +577,9 @@ public final class SkipList<K extends Comparable<? super K>> {
             
             for (Node<K> n = head.node; n != null; n = n.next) {
                 
-                String nodeContent = Objects.toString(n.key);
+                String nodeContent = 
+                        Objects.toString(n.key == null ? " " : n.key);
+                
                 int nodeContentLength = nodeContent.length();
                 
                 charMatrix[startRowIndex][startColIndex]     = '+';
@@ -595,6 +597,12 @@ public final class SkipList<K extends Comparable<? super K>> {
                     
                     startColIndex++;
                 }
+                
+                charMatrix[startRowIndex][startColIndex] = '+';
+                charMatrix[startRowIndex + 1][startColIndex] = '|';
+                charMatrix[startRowIndex + 2][startColIndex] = '+';
+                
+                startColIndex++;
                 
                 if (n.next != null) {
                     charMatrix[startRowIndex + 1][startColIndex++] = '-';
@@ -657,7 +665,7 @@ public final class SkipList<K extends Comparable<? super K>> {
             int totalTextLength = 0;
             
             for (Node<K> n = head.node; n != null; n = n.next) {
-                String s = Objects.toString(n.key);
+                String s = Objects.toString(n.key == null ? " " : n.key);
                 totalTextLength += s.length();
             }
             

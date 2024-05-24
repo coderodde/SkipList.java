@@ -180,7 +180,7 @@ public class SkipListTest {
         
         assertNull(idx.node.key);
         
-        System.out.println(sl);
+//        System.out.println(sl);
     }
     
     private static SkipList<Integer> getSkipList1() {
