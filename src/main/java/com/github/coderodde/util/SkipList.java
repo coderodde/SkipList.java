@@ -1,5 +1,6 @@
 package com.github.coderodde.util;
 
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -35,6 +36,7 @@ public final class SkipList<K extends Comparable<? super K>> {
     
     private final Random random = new Random(13);
     Index<K> head;
+    Index<K> prev;
     private int size;
     
     public boolean add(K key) {
@@ -380,7 +382,55 @@ public final class SkipList<K extends Comparable<? super K>> {
 //        }
 //    }
     
-    public Index<K> findPredcessorIndex(K key) {
+    public Index<K> findPredecessorIndex(K key) {
+        Index<K> p = head;
+        Index<K> c = head.right;
+        
+        for (;;) {
+            Index<K> n = findPredecessorIndexImpl(key, p, c);
+            
+            if (n.node.key == null) {
+                return p;
+            }
+            
+            p = c;
+            c = n;
+        }
+    }
+    
+    /**
+     * Implements the method for accessing the predecessor index object.
+     * 
+     * @param key the key of the target node.
+     * @param p   the previous index object. 
+     * @param c   the current index object.
+     * 
+     * @return the predecessor of the {@code key} at the given level.
+     */
+    public Index<K> findPredecessorIndexImpl(K key, 
+                                             Index<K> p,
+                                             Index<K> c) {
+        while (c != null) {
+            Node<K> n = c.node;
+            
+            int cmp = n.key.compareTo(key);
+
+            if (cmp == 0) {
+                prev = p;
+                return c;
+            } else if (cmp > 0) {
+                return p;
+            }
+            
+            p = c;
+            c = c.right;
+        }
+        
+        prev = p;
+        return null;
+    }
+    
+    public Index<K> findPredcessorIndex3(K key) {
         
         Index<K> prevIndex = null;
         Index<K> currIndex = head;
@@ -472,6 +522,8 @@ public final class SkipList<K extends Comparable<? super K>> {
         }
     }
     
+    
+    
     private static <K> void unlinkNode(Node<K> b, Node<K> n) {
         if (b != null && n != null) {
             Node<K> f, p;
@@ -491,5 +543,86 @@ public final class SkipList<K extends Comparable<? super K>> {
                 b.next = p;
             }
         }
+    }
+    
+    @Override
+    public String toString() {
+        String chain = computeChainString();
+        return null;
+    }
+    
+    private final class ToStringConverter {
+        private int levels;
+        private char[][] charMatrix;
+        
+        private int getLevels() {
+            int levels = 0;
+            Index<K> index = SkipList.this.head;
+            
+            while (index != null) {
+                levels++;
+                index = index.down;
+            }
+            
+            return levels;
+        }
+        
+        private int getCharMatrixHeight() {
+            int levels = getLevels();
+            return 5 * levels + 3;
+        }
+        
+        private int getCharMatrixWidth() {
+            int nodes = size + 1;
+            int totalTextLength = getTotalTextLength();
+        }
+        
+        private int getTotalTextLength() {
+            
+        }
+        
+        private void initCharMatrix() {
+            
+        }
+    }
+    
+    private String computeChainString() {
+        StringBuilder sb = new StringBuilder();
+        Node<K> node = head.node;
+        
+        while (node != null) {
+            sb.append(computeNodeString(node));
+        }
+    }
+    
+    private String computeNodeString(Node<K> node) {
+        K key = node.key;
+        String s = Objects.toString(key);
+        int sWidth = s.length();
+        
+        StringBuilder sb = new StringBuilder();
+        String hbar = getHbar(sWidth);
+        
+        sb.append(hbar);
+        sb.append("|");
+        sb.append(key);
+        sb.append("|");
+        sb.append(hbar);
+        
+        return sb.toString();
+    }
+    
+    private String getHbar(int sWidth) {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append("+");
+        
+        for (int i = 0; i < sWidth; i++) {
+            sb.append("-");
+        }
+        
+        sb.append("+");
+        
+        return sb.toString();
     }
 }

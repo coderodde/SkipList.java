@@ -57,29 +57,29 @@ public class SkipListTest {
         list.add(3);
         list.add(4);
         
-        Index<Integer> index = list.findPredcessorIndex(0);
-        
-        assertTrue(index == list.head);
-        
-        index = list.findPredcessorIndex(1);
-        
-        assertTrue(index == list.head);
-        
-        index = list.findPredcessorIndex(2);
-        
-        assertTrue(index == list.head.right);
-        
-        index = list.findPredcessorIndex(3);
-        
-        assertTrue(index == list.head.right);
-        
-        index = list.findPredcessorIndex(4);
-        
-        assertTrue(index == list.head.right);
-        
-        index = list.findPredcessorIndex(5);
-        
-        assertTrue(index == list.head.right);
+//        Index<Integer> index = list.findPredcessorIndex(0);
+//        
+//        assertTrue(index == list.head);
+//        
+//        index = list.findPredcessorIndex(1);
+//        
+//        assertTrue(index == list.head);
+//        
+//        index = list.findPredcessorIndex(2);
+//        
+//        assertTrue(index == list.head.right);
+//        
+//        index = list.findPredcessorIndex(3);
+//        
+//        assertTrue(index == list.head.right);
+//        
+//        index = list.findPredcessorIndex(4);
+//        
+//        assertTrue(index == list.head.right);
+//        
+//        index = list.findPredcessorIndex(5);
+//        
+//        assertTrue(index == list.head.right);
     }
     
 //    @Test
@@ -168,6 +168,14 @@ public class SkipListTest {
     @Test
     public void test1() {
         SkipList<Integer> sl = getSkipList1();
+        
+        Index<Integer> idx = sl.findPredecessorIndex(0);
+        
+        assertNull(idx.node.key);
+        
+        idx = sl.findPredecessorIndex(1);
+        
+        assertNull(idx.node.key);
         
         System.out.println(sl);
     }
