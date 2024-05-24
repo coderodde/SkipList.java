@@ -1,6 +1,8 @@
 package com.github.coderodde.util;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -20,6 +22,16 @@ public final class SkipList<K extends Comparable<? super K>> {
         Node(K key, Node<K> next) {
             this.key = key;
             this.next = next;
+        }
+        
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(key);
+        }
+        
+        @Override
+        public boolean equals(Object o) {
+            return Objects.equals(((Node<K>) o).key, this.key);
         }
     }
     
@@ -554,6 +566,7 @@ public final class SkipList<K extends Comparable<? super K>> {
     private final class ToStringConverter {
         private int levels;
         private char[][] charMatrix;
+        private final Map<Node<K>, Integer> columnIndexMap = new HashMap<>();
         
         ToStringConverter() {
             this.levels = getLevels();
@@ -562,13 +575,80 @@ public final class SkipList<K extends Comparable<? super K>> {
         String convert() {
             charMatrix = getCharacterMatrix();
             
-            for (int l = 0; l < levels; l++) {
-//                applyIndexChain(l);
-            }
-            
             applyNodeChain();
             
+            for (int l = 0; l < levels; l++) {
+                applyIndexChain(l);
+            }
+            
             return convertMatrixToString();
+        }
+        
+        private Index<K> getStartIndex(int level) {
+            Index<K> target = head;
+            
+            while (level-- > 0) {
+                target = target.down;
+            }
+            
+            return target;
+        }
+        
+        private void applyIndexChain(int level) {
+            if (level == levels - 1) {
+                applyBottomIndexChain();
+            } else {
+                applyIntermediateIndexChain(level);
+            }
+        }
+        
+        private void setBox(int x, int y) {
+            charMatrix[y - 1][x - 1] = '+';
+            charMatrix[y - 1][x]     = '-';
+            charMatrix[y - 1][x + 1] = '+';
+            charMatrix[y    ][x - 1] = '|';
+            charMatrix[y    ][x + 1] = '|';
+            charMatrix[y + 1][x - 1] = '+';
+            charMatrix[y + 1][x]     = '-';
+            charMatrix[y + 1][x + 1] = '+';
+        }
+        
+        private void applyBottomIndexChain() {
+            Index<K> index = getStartIndex(levels - 1);
+            Index<K> next = index.right;
+            int startRowIndex = (levels - 1) * 5;
+            
+            while (index != null) {
+                // Print the box:
+                int x = columnIndexMap.get(index.node);
+                setBox(x, startRowIndex + 1);
+                
+                // Print the arrow to the node:
+                charMatrix[startRowIndex + 3][x] = '|';
+                charMatrix[startRowIndex + 4][x] = 'v';
+                
+                if (next != null) {
+                    // Print the arrow to the right:
+                    int arrowLength = columnIndexMap.get(next.node)
+                                    - columnIndexMap.get(index.node)
+                                    - 4;
+                    
+                    int xx = columnIndexMap.get(index.node) + 2;
+                    
+                    for (int i = 0; i < arrowLength; i++) {
+                        charMatrix[startRowIndex + 1][xx++] = '-';
+                    }
+                    
+                    charMatrix[startRowIndex + 1][xx] = '>';
+                    next = next.right;
+                }
+                
+                index = index.right;
+            }
+        }
+        
+        private void applyIntermediateIndexChain(int level) {
+            
         }
         
         private void applyNodeChain() {
@@ -576,6 +656,8 @@ public final class SkipList<K extends Comparable<? super K>> {
             int startColIndex = 0;
             
             for (Node<K> n = head.node; n != null; n = n.next) {
+                
+                columnIndexMap.put(n, startColIndex + 1);
                 
                 String nodeContent = 
                         Objects.toString(n.key == null ? " " : n.key);
