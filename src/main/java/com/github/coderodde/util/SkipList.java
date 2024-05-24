@@ -1,5 +1,6 @@
 package com.github.coderodde.util;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 
@@ -555,6 +556,34 @@ public final class SkipList<K extends Comparable<? super K>> {
         private int levels;
         private char[][] charMatrix;
         
+        ToStringConverter() {
+            this.levels = getLevels();
+        }
+        
+        String convert() {
+            char[][] m = getCharacterMatrix();
+            
+            applyNodeChain();
+            
+            return convertMatrixToString(m);
+        }
+        
+        private String convertMatrixToString(char[][] matrix) {
+            StringBuilder sb = 
+                    new StringBuilder(
+                            matrix.length * (matrix[0].length + 1));
+            
+            for (char[] row : matrix) {
+                for (char ch : row) {
+                    sb.append(ch);
+                }
+                
+                sb.append("\n");
+            }
+            
+            return sb.toString();
+        }
+        
         private int getLevels() {
             int levels = 0;
             Index<K> index = SkipList.this.head;
@@ -567,18 +596,37 @@ public final class SkipList<K extends Comparable<? super K>> {
             return levels;
         }
         
+        private char[][] getCharacterMatrix() {
+            int height = getCharMatrixHeight();
+            int width = getCharMatrixWidth();
+            char[][] charMatrix = new char[height][width];
+            
+            for (char[] row : charMatrix) {
+                Arrays.fill(row, ' ');
+            }
+            
+            return charMatrix;
+        }
+        
         private int getCharMatrixHeight() {
-            int levels = getLevels();
             return 5 * levels + 3;
         }
         
         private int getCharMatrixWidth() {
             int nodes = size + 1;
             int totalTextLength = getTotalTextLength();
+            return totalTextLength + nodes * 4;
         }
         
         private int getTotalTextLength() {
+            int totalTextLength = 0;
             
+            for (Node<K> n = head.node; n != null; n = n.next) {
+                String s = Objects.toString(n.key);
+                totalTextLength += s.length();
+            }
+            
+            return totalTextLength;
         }
         
         private void initCharMatrix() {
