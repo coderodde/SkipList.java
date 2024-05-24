@@ -169,6 +169,9 @@ public class SkipListTest {
     public void test1() {
         SkipList<Integer> sl = getSkipList1();
         
+        System.out.println("Print test:");
+        System.out.println(sl);
+        
         Index<Integer> idx = sl.findPredecessorIndex(0);
         
         assertNull(idx.node.key);
@@ -182,7 +185,7 @@ public class SkipListTest {
     
     private static SkipList<Integer> getSkipList1() {
         SkipList<Integer> sl = new SkipList<>();
-        
+        sl.size = 8;
         Node<Integer> nx = new Node<>(null, null);
         Node<Integer> n0 = new Node<>(null, null);
         Node<Integer> n1 = new Node<>(null, null);

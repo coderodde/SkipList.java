@@ -38,7 +38,7 @@ public final class SkipList<K extends Comparable<? super K>> {
     private final Random random = new Random(13);
     Index<K> head;
     Index<K> prev;
-    private int size;
+    int size;
     
     public boolean add(K key) {
         return doPut(key);
@@ -548,8 +548,7 @@ public final class SkipList<K extends Comparable<? super K>> {
     
     @Override
     public String toString() {
-        String chain = computeChainString();
-        return null;
+        return new ToStringConverter().convert();
     }
     
     private final class ToStringConverter {
@@ -561,19 +560,55 @@ public final class SkipList<K extends Comparable<? super K>> {
         }
         
         String convert() {
-            char[][] m = getCharacterMatrix();
+            charMatrix = getCharacterMatrix();
+            
+            for (int l = 0; l < levels; l++) {
+//                applyIndexChain(l);
+            }
             
             applyNodeChain();
             
-            return convertMatrixToString(m);
+            return convertMatrixToString();
         }
         
-        private String convertMatrixToString(char[][] matrix) {
+        private void applyNodeChain() {
+            int startRowIndex = levels * 5;
+            int startColIndex = 0;
+            
+            for (Node<K> n = head.node; n != null; n = n.next) {
+                
+                String nodeContent = Objects.toString(n.key);
+                int nodeContentLength = nodeContent.length();
+                
+                charMatrix[startRowIndex][startColIndex]     = '+';
+                charMatrix[startRowIndex + 1][startColIndex] = '|';
+                charMatrix[startRowIndex + 2][startColIndex] = '+';
+                
+                startColIndex++;
+                
+                for (int i = 0; i < nodeContentLength; i++) {
+                    charMatrix[startRowIndex][startColIndex] = '-';
+                    charMatrix[startRowIndex + 1][startColIndex] = 
+                        nodeContent.charAt(i);
+                    
+                    charMatrix[startRowIndex + 2][startColIndex] = '-';
+                    
+                    startColIndex++;
+                }
+                
+                if (n.next != null) {
+                    charMatrix[startRowIndex + 1][startColIndex++] = '-';
+                    charMatrix[startRowIndex + 1][startColIndex++] = '>';
+                }
+            }
+        }
+        
+        private String convertMatrixToString() {
             StringBuilder sb = 
                     new StringBuilder(
-                            matrix.length * (matrix[0].length + 1));
+                            charMatrix.length * (charMatrix[0].length + 1));
             
-            for (char[] row : matrix) {
+            for (char[] row : charMatrix) {
                 for (char ch : row) {
                     sb.append(ch);
                 }
@@ -635,12 +670,13 @@ public final class SkipList<K extends Comparable<? super K>> {
     }
     
     private String computeChainString() {
-        StringBuilder sb = new StringBuilder();
-        Node<K> node = head.node;
-        
-        while (node != null) {
-            sb.append(computeNodeString(node));
-        }
+//        StringBuilder sb = new StringBuilder();
+//        Node<K> node = head.node;
+//        
+//        while (node != null) {
+//            sb.append(computeNodeString(node));
+//        }
+        throw new RuntimeException();
     }
     
     private String computeNodeString(Node<K> node) {
