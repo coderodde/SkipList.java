@@ -84,15 +84,15 @@ public class SkipListTest {
         
         index = list.findPredecessorIndexImpl(5, list.head);
         
-        assertTrue(index == list.head);
+        assertTrue(index == list.head.right);
         
         index = list.findPredecessorIndexImpl(6, list.head);
         
-        assertTrue(index == list.head.right.right);
+        assertTrue(index == list.head.right);
         
         index = list.findPredecessorIndexImpl(7, list.head);
         
-        assertTrue(index == list.head.right.right);
+        assertTrue(index == list.head.right);
         System.out.println("testFindPredecessorIndex() done!");
     }
     

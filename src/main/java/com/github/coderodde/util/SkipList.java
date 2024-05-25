@@ -411,14 +411,19 @@ public final class SkipList<K extends Comparable<? super K>> {
             
             int c = key.compareTo(f.node.key);
             
-            if (c <= 0) {
+            if (c == 0) {
+                return f;
+            }
+            
+            if (c < 0) {
                 return p;
             }
             
+            p = f;
             f = f.right;
         }
         
-        return null;
+        return p;
     }
     
     public Index<K> findPredcessorIndex3(K key) {
