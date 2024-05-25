@@ -72,19 +72,27 @@ public class SkipListTest {
         
         index = list.findPredecessorIndexImpl(2, list.head);
         
-        assertTrue(index == list.head.right);
+        assertTrue(index == list.head);
         
         index = list.findPredecessorIndexImpl(3, list.head);
         
-        assertTrue(index == list.head.right);
+        assertTrue(index == list.head);
         
         index = list.findPredecessorIndexImpl(4, list.head);
         
-        assertTrue(index == list.head.right);
+        assertTrue(index == list.head);
         
         index = list.findPredecessorIndexImpl(5, list.head);
         
-        assertTrue(index == list.head.right);
+        assertTrue(index == list.head);
+        
+        index = list.findPredecessorIndexImpl(6, list.head);
+        
+        assertTrue(index == list.head.right.right);
+        
+        index = list.findPredecessorIndexImpl(7, list.head);
+        
+        assertTrue(index == list.head.right.right);
         System.out.println("testFindPredecessorIndex() done!");
     }
     

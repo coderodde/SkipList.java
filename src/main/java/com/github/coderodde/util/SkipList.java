@@ -403,20 +403,16 @@ public final class SkipList<K extends Comparable<? super K>> {
      * 
      * @return the predecessor of the {@code key} at the given level.
      */
-    public Index<K> findPredecessorIndexImpl(K key, Index<K> startIndex) {
-        Index<K> p = startIndex;
-        Index<K> f = startIndex.right;
+    public Index<K> findPredecessorIndexImpl(K key, Index<K> s) {
+        Index<K> p = s;
+        Index<K> f = s.right;
         
         while (f != null) {
             
-            int cmp = key.compareTo(f.node.key);
+            int c = key.compareTo(f.node.key);
             
-            if (cmp == 0) {
+            if (c <= 0) {
                 return p;
-            }
-            
-            if (cmp > 0) {
-                return f;
             }
             
             f = f.right;
