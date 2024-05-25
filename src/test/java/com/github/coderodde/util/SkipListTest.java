@@ -25,7 +25,7 @@ public class SkipListTest {
         list = new SkipList<>();
     }
     
-//    @Test
+    @Test
     public void testAdd() {
         System.out.println("Beginning testAdd()...");
         
@@ -47,39 +47,45 @@ public class SkipListTest {
         assertFalse(list.add(3));
         assertFalse(list.add(1));
         
+        System.out.println(list);
         System.out.println("testAdd() done!");
     }
 
-//    @Test
+    @Test
     public void testFindPredecessorIndex() {
+        System.out.println("testFindPredecessorIndex()...");
+        
         list.add(1);
         list.add(2);
         list.add(3);
         list.add(4);
+        list.add(5);
+        list.add(6);
+        list.add(7);
+        list.add(8);
         
-//        Index<Integer> index = list.findPredcessorIndex(0);
-//        
-//        assertTrue(index == list.head);
-//        
-//        index = list.findPredcessorIndex(1);
-//        
-//        assertTrue(index == list.head);
-//        
-//        index = list.findPredcessorIndex(2);
-//        
-//        assertTrue(index == list.head.right);
-//        
-//        index = list.findPredcessorIndex(3);
-//        
-//        assertTrue(index == list.head.right);
-//        
-//        index = list.findPredcessorIndex(4);
-//        
-//        assertTrue(index == list.head.right);
-//        
-//        index = list.findPredcessorIndex(5);
-//        
-//        assertTrue(index == list.head.right);
+        System.out.println(list);
+        
+        Index<Integer> index = list.findPredecessorIndexImpl(1, list.head);
+        
+        assertTrue(index == list.head);
+        
+        index = list.findPredecessorIndexImpl(2, list.head);
+        
+        assertTrue(index == list.head.right);
+        
+        index = list.findPredecessorIndexImpl(3, list.head);
+        
+        assertTrue(index == list.head.right);
+        
+        index = list.findPredecessorIndexImpl(4, list.head);
+        
+        assertTrue(index == list.head.right);
+        
+        index = list.findPredecessorIndexImpl(5, list.head);
+        
+        assertTrue(index == list.head.right);
+        System.out.println("testFindPredecessorIndex() done!");
     }
     
 //    @Test
@@ -165,45 +171,45 @@ public class SkipListTest {
         System.out.println("testRemove() done!");
     }
     
-    @Test
+//    @Test
     public void test1() {
-        SkipList<Integer> sl = getSkipList1();
+        SkipList<String> sl = getSkipList1();
         
         System.out.println("Print test:");
         System.out.println(sl);
         
-        Index<Integer> idx = sl.findPredecessorIndex(0);
-        
-        assertNull(idx.node.key);
-        
-        idx = sl.findPredecessorIndex(1);
-        
-        assertNull(idx.node.key);
-        
-//        System.out.println(sl);
+//        Index<Integer> idx = sl.findPredecessorIndex(0);
+//        
+//        assertNull(idx.node.key);
+//        
+//        idx = sl.findPredecessorIndex(1);
+//        
+//        assertNull(idx.node.key);
+//        
+////        System.out.println(sl);
     }
     
-    private static SkipList<Integer> getSkipList1() {
-        SkipList<Integer> sl = new SkipList<>();
+    private static SkipList<String> getSkipList1() {
+        SkipList<String> sl = new SkipList<>();
         sl.size = 8;
-        Node<Integer> nx = new Node<>(null, null);
-        Node<Integer> n0 = new Node<>(null, null);
-        Node<Integer> n1 = new Node<>(null, null);
-        Node<Integer> n2 = new Node<>(null, null);
-        Node<Integer> n3 = new Node<>(null, null);
-        Node<Integer> n4 = new Node<>(null, null);
-        Node<Integer> n5 = new Node<>(null, null);
-        Node<Integer> n6 = new Node<>(null, null);
-        Node<Integer> n7 = new Node<>(null, null);
+        Node<String> nx = new Node<>(null, null);
+        Node<String> n0 = new Node<>(null, null);
+        Node<String> n1 = new Node<>(null, null);
+        Node<String> n2 = new Node<>(null, null);
+        Node<String> n3 = new Node<>(null, null);
+        Node<String> n4 = new Node<>(null, null);
+        Node<String> n5 = new Node<>(null, null);
+        Node<String> n6 = new Node<>(null, null);
+        Node<String> n7 = new Node<>(null, null);
         
-        n0.key = 0;
-        n1.key = 1;
-        n2.key = 2;
-        n3.key = 3;
-        n4.key = 4;
-        n5.key = 5;
-        n6.key = 6;
-        n7.key = 7;
+        n0.key = "0";
+        n1.key = "1";
+        n2.key = "2";
+        n3.key = "3000";
+        n4.key = "4";
+        n5.key = "5\n6\n\n7";
+        n6.key = "6";
+        n7.key = "7";
         
         nx.next = n0;
         n0.next = n1;
@@ -215,13 +221,13 @@ public class SkipListTest {
         n6.next = n7;
         n7.next = null;
         
-        Index<Integer> il10 = new Index<>(null, null, null);
-        Index<Integer> il11 = new Index<>(null, null, null);
+        Index<String> il10 = new Index<>(null, null, null);
+        Index<String> il11 = new Index<>(null, null, null);
         
-        Index<Integer> il20 = new Index<>(null, null, null);
-        Index<Integer> il21 = new Index<>(null, null, null);
-        Index<Integer> il22 = new Index<>(null, null, null);
-        Index<Integer> il23 = new Index<>(null, null, null);
+        Index<String> il20 = new Index<>(null, null, null);
+        Index<String> il21 = new Index<>(null, null, null);
+        Index<String> il22 = new Index<>(null, null, null);
+        Index<String> il23 = new Index<>(null, null, null);
         
         
         // Top index layer:

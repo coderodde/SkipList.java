@@ -221,7 +221,6 @@ public final class SkipList<K extends Comparable<? super K>> {
                         
                         for (;;) {
                             x = new Index<>(z, x, null);
-                            System.out.println("rnd = " + Long.toBinaryString(rnd));
                             
                             if (rnd >= 0L || --skips < 0) {
                                 break;
@@ -395,22 +394,6 @@ public final class SkipList<K extends Comparable<? super K>> {
 //        }
 //    }
     
-    public Index<K> findPredecessorIndex(K key) {
-        Index<K> p = head;
-        Index<K> c = head.right;
-        
-        for (;;) {
-            Index<K> n = findPredecessorIndexImpl(key, p, c);
-            
-            if (n.node.key == null) {
-                return p;
-            }
-            
-            p = c;
-            c = n;
-        }
-    }
-    
     /**
      * Implements the method for accessing the predecessor index object.
      * 
@@ -420,26 +403,25 @@ public final class SkipList<K extends Comparable<? super K>> {
      * 
      * @return the predecessor of the {@code key} at the given level.
      */
-    public Index<K> findPredecessorIndexImpl(K key, 
-                                             Index<K> p,
-                                             Index<K> c) {
-        while (c != null) {
-            Node<K> n = c.node;
+    public Index<K> findPredecessorIndexImpl(K key, Index<K> startIndex) {
+        Index<K> p = startIndex;
+        Index<K> f = startIndex.right;
+        
+        while (f != null) {
             
-            int cmp = n.key.compareTo(key);
-
+            int cmp = key.compareTo(f.node.key);
+            
             if (cmp == 0) {
-                prev = p;
-                return c;
-            } else if (cmp > 0) {
                 return p;
             }
             
-            p = c;
-            c = c.right;
+            if (cmp > 0) {
+                return f;
+            }
+            
+            f = f.right;
         }
         
-        prev = p;
         return null;
     }
     
@@ -535,8 +517,6 @@ public final class SkipList<K extends Comparable<? super K>> {
         }
     }
     
-    
-    
     private static <K> void unlinkNode(Node<K> b, Node<K> n) {
         if (b != null && n != null) {
             Node<K> f, p;
@@ -574,11 +554,10 @@ public final class SkipList<K extends Comparable<? super K>> {
         
         String convert() {
             charMatrix = getCharacterMatrix();
-            
             applyNodeChain();
             
             for (int l = 0; l < levels; l++) {
-                applyIndexChain(l);
+                applyIndexChainImpl(l);
             }
             
             return convertMatrixToString();
@@ -594,14 +573,6 @@ public final class SkipList<K extends Comparable<? super K>> {
             return target;
         }
         
-        private void applyIndexChain(int level) {
-            if (level == levels - 1) {
-                applyBottomIndexChain();
-            } else {
-                applyIntermediateIndexChain(level);
-            }
-        }
-        
         private void setBox(int x, int y) {
             charMatrix[y - 1][x - 1] = '+';
             charMatrix[y - 1][x]     = '-';
@@ -613,10 +584,10 @@ public final class SkipList<K extends Comparable<? super K>> {
             charMatrix[y + 1][x + 1] = '+';
         }
         
-        private void applyBottomIndexChain() {
-            Index<K> index = getStartIndex(levels - 1);
+        private void applyIndexChainImpl(int level) {
+            Index<K> index = getStartIndex(level);
             Index<K> next = index.right;
-            int startRowIndex = (levels - 1) * 5;
+            int startRowIndex = level * 5;
             
             while (index != null) {
                 // Print the box:
@@ -625,7 +596,7 @@ public final class SkipList<K extends Comparable<? super K>> {
                 
                 // Print the arrow to the node:
                 charMatrix[startRowIndex + 3][x] = '|';
-                charMatrix[startRowIndex + 4][x] = 'v';
+                charMatrix[startRowIndex + 4][x] = 'V';
                 
                 if (next != null) {
                     // Print the arrow to the right:
@@ -647,10 +618,6 @@ public final class SkipList<K extends Comparable<? super K>> {
             }
         }
         
-        private void applyIntermediateIndexChain(int level) {
-            
-        }
-        
         private void applyNodeChain() {
             int startRowIndex = levels * 5;
             int startColIndex = 0;
@@ -660,7 +627,9 @@ public final class SkipList<K extends Comparable<? super K>> {
                 columnIndexMap.put(n, startColIndex + 1);
                 
                 String nodeContent = 
-                        Objects.toString(n.key == null ? " " : n.key);
+                        Objects.toString(
+                                n.key == null ? " " : n.key)
+                                .replaceAll("\n", "\\\\n");
                 
                 int nodeContentLength = nodeContent.length();
                 
@@ -706,6 +675,7 @@ public final class SkipList<K extends Comparable<? super K>> {
                 sb.append("\n");
             }
             
+            sb.deleteCharAt(sb.length() - 1); // Delete the last \n char.
             return sb.toString();
         }
         
@@ -738,65 +708,22 @@ public final class SkipList<K extends Comparable<? super K>> {
         }
         
         private int getCharMatrixWidth() {
-            int nodes = size + 1;
-            int totalTextLength = getTotalTextLength();
-            return totalTextLength + nodes * 4;
-        }
-        
-        private int getTotalTextLength() {
             int totalTextLength = 0;
+            Node<K> node = head.node;
             
-            for (Node<K> n = head.node; n != null; n = n.next) {
-                String s = Objects.toString(n.key == null ? " " : n.key);
-                totalTextLength += s.length();
+            while (node != null) {
+                totalTextLength += 4; // Count box borders and arrow.
+                String nodeText = 
+                        node.key == null ?
+                        " " : 
+                        node.key.toString();
+                
+                nodeText = nodeText.replaceAll("\n", "\\\\n");
+                totalTextLength += nodeText.length();
+                node = node.next;
             }
             
             return totalTextLength;
         }
-        
-        private void initCharMatrix() {
-            
-        }
-    }
-    
-    private String computeChainString() {
-//        StringBuilder sb = new StringBuilder();
-//        Node<K> node = head.node;
-//        
-//        while (node != null) {
-//            sb.append(computeNodeString(node));
-//        }
-        throw new RuntimeException();
-    }
-    
-    private String computeNodeString(Node<K> node) {
-        K key = node.key;
-        String s = Objects.toString(key);
-        int sWidth = s.length();
-        
-        StringBuilder sb = new StringBuilder();
-        String hbar = getHbar(sWidth);
-        
-        sb.append(hbar);
-        sb.append("|");
-        sb.append(key);
-        sb.append("|");
-        sb.append(hbar);
-        
-        return sb.toString();
-    }
-    
-    private String getHbar(int sWidth) {
-        StringBuilder sb = new StringBuilder();
-        
-        sb.append("+");
-        
-        for (int i = 0; i < sWidth; i++) {
-            sb.append("-");
-        }
-        
-        sb.append("+");
-        
-        return sb.toString();
     }
 }
