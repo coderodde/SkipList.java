@@ -56,9 +56,9 @@ public final class SkipList<K extends Comparable<? super K>> {
         return doPut(key);
     }
     
-    public boolean remove(K key) {
-        return doRemove(key);
-    }
+//    public boolean remove(K key) {
+//        return doRemove(key);
+//    }
     
     public boolean contains(K key) {
         return doGet(key);
@@ -350,56 +350,48 @@ public final class SkipList<K extends Comparable<? super K>> {
         
         return result;
     }
-//    
-//    private boolean myDoRemove(Object key) {
-//        if (size == 0) {
-//            // Nothing to remove:
-//            return false;
-//        }
-//        
-//        I
-//        
-//        
-//        
-//        Index<K> prevIndex = null;
-//        Index<K> currIndex = head;
-//        
-//        while (currIndex != null && currIndex.right != null) {
-//            
-//            prevIndex = currIndex;
-//            currIndex = currIndex.right;
-//        }
-//        
-//        Index<K> rightIndex = head.right;
-//        
-//        while 
-//        
-//        if (rightIndex == null) {
-//            Node<K> prev = null, current = head.node;
-//            
-//            for (;;) {
-//                int cmp = current.key.compareTo((K) key);
-//                
-//                if (cmp == 0) {
-//                    prev.next = current.next;
-//                    return true;
-//                }
-//                
-//                if (cmp > 0) {
-//                    return false;
-//                }
-//                
-//                prev = current;
-//            }
-//        }
-//    }
+    
+    public boolean remove(K o) {
+        return myDoRemove(o);
+    }
+
+    private boolean myDoRemove(K key) {
+        if (size == 0) {
+            return false;
+        }
+        
+        Index<K> i = head;
+        
+        for (;;) {
+            i = findPredecessorIndexImpl(key, i);
+            
+            if (i.node.key == null) {
+                i = i.down;
+                
+                if (i == null) {
+                    return false;
+                }
+                
+                continue;
+            } else if (!Objects.equals(key, i.node.key)) {
+                // Simple case: just unlink i.node:
+                prev.node.next = i.node.next;
+                return true;
+            }
+            
+            // Omit the index:
+            prev.right = i.right;
+            
+            // Go downwards in hierarchy:
+            i = i.down;
+        }
+    }
     
     /**
      * Implements the method for accessing the predecessor index object.
      * 
      * @param key the key of the target node.
-     * @param p   the previous index object. 
-     * @param c   the current index object.
+     * @param s   the index from which to access the index with the given key.
      * 
      * @return the predecessor of the {@code key} at the given level.
      */
@@ -412,6 +404,7 @@ public final class SkipList<K extends Comparable<? super K>> {
             int c = key.compareTo(f.node.key);
             
             if (c == 0) {
+                prev = p;
                 return f;
             }
             

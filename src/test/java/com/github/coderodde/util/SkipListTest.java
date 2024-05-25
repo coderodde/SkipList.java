@@ -93,6 +93,11 @@ public class SkipListTest {
         index = list.findPredecessorIndexImpl(7, list.head);
         
         assertTrue(index == list.head.right);
+        
+        list.remove(1);
+        
+        System.out.println(list);
+        
         System.out.println("testFindPredecessorIndex() done!");
     }
     
