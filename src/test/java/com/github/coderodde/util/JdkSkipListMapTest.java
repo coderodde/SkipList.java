@@ -2,6 +2,7 @@ package com.github.coderodde.util;
 
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentSkipListMap;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -116,5 +117,34 @@ public class JdkSkipListMapTest {
             assertEquals(Integer.toString(i), list1.remove(i));
             assertEquals(Integer.toString(i), list2.remove(i));
         }
+    }
+    
+    @Test
+    public void versatile() {
+        Random rnd = new Random(10);
+        JdkSkipListMap<Integer, String> list1 = new JdkSkipListMap<>(CMP);
+        Map<Integer, String> list2 = new ConcurrentSkipListMap<>(CMP);
+        
+        for (int i = 0; i < 300; i++) {
+            assertTrue(list1.equals(list2));
+            
+            int coin = rnd.nextInt(100);
+            int key = rnd.nextInt(150);
+            
+            if (list1.isEmpty() || coin < 50) {
+                list1.put(key, Integer.toString(key));
+                list2.put(key, Integer.toString(key));
+            } else if (coin < 70) {
+                assertEquals(list2.remove(key), 
+                             list1.remove(key));
+            } else {
+                assertEquals(list1.containsKey(key), 
+                             list2.containsKey(key));
+                
+                assertEquals(list2.get(key), list1.get(key));
+            }
+        }
+        
+        assertTrue(list1.equals(list2));
     }
 }

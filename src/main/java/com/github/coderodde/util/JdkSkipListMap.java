@@ -34,7 +34,7 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
     
     final class SkipListIterator implements Iterator<K> {
 
-        private Node<K, V> node = head.node;
+        private Node<K, V> node = head != null ? head.node.next : null;
         private int iterated;
         
         @Override
@@ -50,6 +50,7 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
             
             K ret = node.key;
             node = node.next;
+            iterated++;
             return ret;
         }
     }
@@ -81,6 +82,14 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
     
     public V remove(Object key) {
         return doRemove(key, null);
+    }
+    
+    public int size() {
+        return size;
+    }
+    
+    public boolean isEmpty() {
+        return size == 0;
     }
     
     public boolean equals(Object o) {
