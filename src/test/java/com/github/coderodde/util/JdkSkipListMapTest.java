@@ -1,10 +1,8 @@
 package com.github.coderodde.util;
 
 import java.util.Comparator;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -61,7 +59,6 @@ public class JdkSkipListMapTest {
         }
         
         assertNull(list.remove(0));
-        System.out.println("yes");
         assertNull(list.remove(2));
         assertNull(list.remove(4));
         assertNull(list.remove(6));
@@ -69,6 +66,55 @@ public class JdkSkipListMapTest {
         
         for (int i : new int[]{ 1, 3, 5, 7 }) {
             assertEquals(Integer.toString(i), list.remove(i));
+        }
+    }
+    
+    @Test
+    public void bruteForce() {
+        JdkSkipListMap<Integer, String> list1 = new JdkSkipListMap<>(CMP);
+        Map<Integer, String> list2 = new ConcurrentSkipListMap<>(CMP);
+        
+        for (int i = 0; i < 1000; i++) {
+            assertFalse(list1.containsKey(i));
+            assertNull(list1.get(i));
+            
+            assertFalse(list2.containsKey(i));
+            assertNull(list2.get(i));
+            
+            assertNull(list1.put(i, Integer.toString(i)));
+            assertNull(list2.put(i, Integer.toString(i)));
+            
+            assertTrue(list1.containsKey(i));
+            assertEquals(Integer.toString(i), list1.get(i));
+            assertTrue(list2.containsKey(i));
+            assertEquals(Integer.toString(i), list2.get(i));
+        }
+        
+        for (int i = -100; i < 0; i++) {
+            assertNull(list1.get(i));
+            assertFalse(list1.containsKey(i));
+            
+            assertNull(list2.get(i));
+            assertFalse(list2.containsKey(i));
+            
+            assertNull(list1.remove(i));
+            assertNull(list2.remove(i));
+        }
+        
+        for (int i = 1000; i < 1100; i++) {
+            assertNull(list1.get(i));
+            assertFalse(list1.containsKey(i));
+            
+            assertNull(list2.get(i));
+            assertFalse(list2.containsKey(i));
+            
+            assertNull(list1.remove(i));
+            assertNull(list2.remove(i));
+        }
+        
+        for (int i = 0; i < 200; i++) {
+            assertEquals(Integer.toString(i), list1.remove(i));
+            assertEquals(Integer.toString(i), list2.remove(i));
         }
     }
 }

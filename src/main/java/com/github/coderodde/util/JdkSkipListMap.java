@@ -1,8 +1,10 @@
 package com.github.coderodde.util;
 
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Random;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 public class JdkSkipListMap<K extends Comparable<? super K>, V> {
     static final class Node<K,V> {
@@ -27,6 +29,28 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
             this.node = node;
             this.down = down;
             this.right = right;
+        }
+    }
+    
+    final class SkipListIterator implements Iterator<K> {
+
+        private Node<K, V> node = head.node;
+        private int iterated;
+        
+        @Override
+        public boolean hasNext() {
+            return iterated < size;
+        }
+
+        @Override
+        public K next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            
+            K ret = node.key;
+            node = node.next;
+            return ret;
         }
     }
 
@@ -57,6 +81,53 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
     
     public V remove(Object key) {
         return doRemove(key, null);
+    }
+    
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        
+        if (o == this) {
+            return true;
+        }
+        
+        if (!(o instanceof Map)) {
+            return false;
+        }
+        
+        Map<K, V> otherMap = (Map<K, V>) o;
+        
+        if (size != otherMap.size()) {
+            return false;
+        }
+        
+        Iterator<K> iter1 = otherMap.keySet().iterator();
+        Iterator<K> iter2 = new SkipListIterator();
+        
+        for (;;) {
+            boolean b1 = iter1.hasNext();
+            boolean b2 = iter2.hasNext();
+            
+            if (b1 && !b2) {
+                return false;
+            }
+            
+            if (!b1 && b2) {
+                return false;
+            }
+            
+            if (!b1 && !b2) {
+                return true;
+            }
+            
+            K key1 = iter1.next();
+            K key2 = iter2.next();
+            
+            if (!key1.equals(key2)) {
+                return false;
+            }
+        }
     }
     
     private V doGet(Object key) {
