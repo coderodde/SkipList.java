@@ -130,12 +130,12 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
                     while ((r = q.right) != null) {
                         Node<K,V> p; K k = null;
                         if ((p = r.node) == null || (k = p.key) == null ||
-                            p.val == null)
+                            p.val == null) {
                             if (q.right == r) {
                                 q.right = r.right;
                             }
 //                            RIGHT.compareAndSet(q, r, r.right);
-                        else if (cpr(cmp, key, k) > 0)
+                        } else if (cpr(cmp, key, k) > 0)
                             q = r;
                         else
                             break;
@@ -208,6 +208,8 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
                                 break;
                             else
                                 rnd <<= 1;
+                            
+                            System.out.println(Long.toBinaryString(rnd));
                         }
                         
                         if (addIndices(h, skips, x, cmp) && skips < 0 &&
