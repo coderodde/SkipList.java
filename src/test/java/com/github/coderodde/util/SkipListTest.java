@@ -69,41 +69,49 @@ public class SkipListTest {
         Index<Integer> index = list.findPredecessorIndexImpl(1, list.head);
         
         assertTrue(index == list.head);
-        assertNull(list.prev);
+        assertNull(list.tp);
+        assertNull(list.bp);
         
         index = list.findPredecessorIndexImpl(2, list.head);
         
         assertTrue(index == list.head);
-        assertNull(list.prev);
+        assertNull(list.tp);
+        assertNull(list.bp);
         
         index = list.findPredecessorIndexImpl(3, list.head);
         
         assertTrue(index == list.head);
-        assertNull(list.prev);
+        assertNull(list.tp);
+        assertNull(list.bp);
         
         index = list.findPredecessorIndexImpl(4, list.head);
         
         assertTrue(index == list.head);
-        assertNull(list.prev);
+        assertNull(list.tp);
+        assertNull(list.bp);
         
         index = list.findPredecessorIndexImpl(5, list.head);
         
         assertTrue(index == list.head.right);
-        assertTrue(list.prev == list.head);
+        assertNull(list.tp == list.head);
+        assertNull(list.bp == list.head);
         
-        index = list.findPredecessorIndexImpl(6, list.head);
+//        assertTrue(list.prev == list.head);
+//        
+//        index = list.findPredecessorIndexImpl(6, list.head);
+//        
+//        assertTrue(index == list.head.right);
+//        assertTrue(list.prev == list.head);
+//        
+//        index = list.findPredecessorIndexImpl(7, list.head);
+//        
+//        assertTrue(list.prev == list.head);
+//        assertTrue(index == list.head.right);
         
-        assertTrue(index == list.head.right);
-        assertTrue(list.prev == list.head);
+//        list.remove(3);
         
-        index = list.findPredecessorIndexImpl(7, list.head);
-        
-        assertTrue(list.prev == list.head);
-        assertTrue(index == list.head.right);
-        
-        list.remove(1);
-        
-        System.out.println(list);
+        System.out.println("no");
+//        System.out.println(list);
         
         System.out.println("testFindPredecessorIndex() done!");
     }

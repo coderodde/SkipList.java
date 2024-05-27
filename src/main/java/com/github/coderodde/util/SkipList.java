@@ -49,7 +49,8 @@ public final class SkipList<K extends Comparable<? super K>> {
     
     private final Random random = new Random(13);
     Index<K> head;
-    Index<K> prev;
+    Index<K> tp;
+    Index<K> bp;
     int size;
     
     public boolean add(K key) {
@@ -373,18 +374,30 @@ public final class SkipList<K extends Comparable<? super K>> {
                 }
                 
                 continue;
-            } else if (!Objects.equals(key, i.node.key)) {
-                // Simple case: just unlink i.node:
-                prev.node.next = i.node.next;
-                return true;
             }
             
-            // Omit the index:
-            prev.right = i.right;
-            
-            // Go downwards in hierarchy:
-            i = i.down;
+            if (key.compareTo(i.node.key) == 0) {
+                // Once here, we need to unlink the index object with key 'key':
+                
+            } else {
+                
+            }
+//            else if (!Objects.equals(key, i.node.key)) {
+//                // Simple case: just unlink i.node:
+//                prev.node.next = i.node.next;
+//                return true;
+//            }
+//            
+//            // Omit the index:
+//            prev.right = i.right;
+//            
+//            // Go downwards in hierarchy:
+//            i = i.down;
         }
+        
+//        while (head.right == null && head.down != null) {
+//            head = head.down;
+//        }
     }
     
     /**
@@ -397,26 +410,31 @@ public final class SkipList<K extends Comparable<? super K>> {
      */
     public Index<K> findPredecessorIndexImpl(K key, Index<K> s) {
         Index<K> p = s;
-        Index<K> f = s.right;
+        Index<K> i = s.right;
         
-        while (f != null) {
+        while (i != null) {
             
-            int c = key.compareTo(f.node.key);
+            int c = key.compareTo(i.node.key);
             
             if (c == 0) {
-                prev = p;
-                return f;
+                // Precise match:
+                if (tp == null) {
+                    tp = p;
+                    bp = p;
+                }
+                
+                bp.down = p;
+                bp = p;
+                return i;
             }
             
             if (c < 0) {
-                // No match available. Return the previous index object and set
-                // prev to null:
-                prev = null;
+                // No match and cannot be any more:
                 return p;
             }
             
-            p = f;
-            f = f.right;
+            p = i;
+            i = i.right;
         }
         
         return p;
