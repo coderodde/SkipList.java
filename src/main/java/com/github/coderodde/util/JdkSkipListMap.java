@@ -292,8 +292,6 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
                                 break;
                             else
                                 rnd <<= 1;
-                            
-                            System.out.println(Long.toBinaryString(rnd));
                         }
                         
                         if (addIndices(h, skips, x, cmp) && skips < 0 &&
@@ -323,7 +321,6 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
             return null;
         else {
             for (Index<K,V> r, d;;) {
-                System.out.println("find yeah");
                 while ((r = q.right) != null) {
                     Node<K,V> p; K k = null;
                     if ((p = r.node) == null || (k = p.key) == null ||
@@ -429,11 +426,9 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
         Comparator<? super K> cmp = comparator;
         V result = null;
         Node<K,V> b;
-        System.out.println("hello there!");
         outer: while ((b = findPredecessor(key, cmp)) != null &&
                       result == null) {
             for (;;) {
-                System.out.println("hello");
                 Node<K,V> n; K k; V v; int c;
                 if ((n = b.next) == null)
                     break outer;
