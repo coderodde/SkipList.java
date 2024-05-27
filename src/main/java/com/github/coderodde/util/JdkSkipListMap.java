@@ -39,6 +39,10 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
         this.comparator = comparator;
     }
     
+    public V get(Object key) {
+        return doGet(key);
+    }
+    
     public boolean containsKey(Object key) {
         return doGet(key) != null;
     }
