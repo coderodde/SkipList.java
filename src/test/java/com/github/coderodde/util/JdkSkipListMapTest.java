@@ -61,6 +61,7 @@ public class JdkSkipListMapTest {
         }
         
         assertNull(list.remove(0));
+        System.out.println("yes");
         assertNull(list.remove(2));
         assertNull(list.remove(4));
         assertNull(list.remove(6));
