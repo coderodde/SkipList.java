@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class JdkSkipListMapTest {
+public class SkipListMapTest {
 
     private static final Comparator<Integer> CMP = new Comparator<>(){
         @Override
@@ -18,7 +18,7 @@ public class JdkSkipListMapTest {
     
     @Test
     public void containsKey() {
-        JdkSkipListMap<Integer, String> list = new JdkSkipListMap<>(CMP);
+        SkipListMap<Integer, String> list = new SkipListMap<>(CMP);
         
         for (int i = 0; i < 10; i++) {
             assertFalse(list.containsKey(i));
@@ -35,7 +35,7 @@ public class JdkSkipListMapTest {
     
     @Test
     public void get() {
-        JdkSkipListMap<Integer, String> list = new JdkSkipListMap<>(CMP);
+        SkipListMap<Integer, String> list = new SkipListMap<>(CMP);
         
         assertNull(list.put(1, "1"));
         assertNull(list.put(2, "2"));
@@ -53,7 +53,7 @@ public class JdkSkipListMapTest {
     
     @Test
     public void remove() {
-        JdkSkipListMap<Integer, String> list = new JdkSkipListMap<>(CMP);
+        SkipListMap<Integer, String> list = new SkipListMap<>(CMP);
         
         for (int i : new int[]{ 1, 3, 5, 7 }) {
             list.put(i, Integer.toString(i));
@@ -72,7 +72,7 @@ public class JdkSkipListMapTest {
     
     @Test
     public void bruteForce() {
-        JdkSkipListMap<Integer, String> list1 = new JdkSkipListMap<>(CMP);
+        SkipListMap<Integer, String> list1 = new SkipListMap<>(CMP);
         Map<Integer, String> list2 = new ConcurrentSkipListMap<>(CMP);
         
         for (int i = 0; i < 1000; i++) {
@@ -122,7 +122,7 @@ public class JdkSkipListMapTest {
     @Test
     public void versatile() {
         Random rnd = new Random(10);
-        JdkSkipListMap<Integer, String> list1 = new JdkSkipListMap<>(CMP);
+        SkipListMap<Integer, String> list1 = new SkipListMap<>(CMP);
         Map<Integer, String> list2 = new ConcurrentSkipListMap<>(CMP);
         
         for (int i = 0; i < 300; i++) {

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-public class JdkSkipListMap<K extends Comparable<? super K>, V> {
+public class SkipListMap<K extends Comparable<? super K>, V> {
     static final class Node<K,V> {
         final K key; // currently, never detached
         V val;
@@ -60,7 +60,7 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
     private final Random random = new Random(13);
     final Comparator<? super K> comparator;
     
-    public JdkSkipListMap(Comparator<? super K> comparator) {
+    public SkipListMap(Comparator<? super K> comparator) {
         this.comparator = comparator;
     }
     
@@ -489,8 +489,8 @@ public class JdkSkipListMap<K extends Comparable<? super K>, V> {
     }
     
     public static void main(String[] args) {
-        JdkSkipListMap<Integer, String> l =
-                new JdkSkipListMap<>(new Comparator<Integer>(){
+        SkipListMap<Integer, String> l =
+                new SkipListMap<>(new Comparator<Integer>(){
                     
             @Override
             public int compare(Integer o1, Integer o2) {
