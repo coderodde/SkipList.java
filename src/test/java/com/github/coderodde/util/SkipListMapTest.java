@@ -122,7 +122,7 @@ public class SkipListMapTest {
     @Test
     public void versatile() {
         Random rnd = new Random(10);
-        SkipListMap<Integer, String> list1 = new SkipListMap<>(CMP);
+        Map<Integer, String> list1 = new SkipListMap<>(CMP);
         Map<Integer, String> list2 = new ConcurrentSkipListMap<>(CMP);
         
         for (int i = 0; i < 300; i++) {
