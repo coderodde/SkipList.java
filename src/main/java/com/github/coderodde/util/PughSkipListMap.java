@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public final class SkipListMap<K extends Comparable<? super K>, V>
+public final class PughSkipListMap<K extends Comparable<? super K>, V>
           implements SortedMap<K, V> {
     
     /**
@@ -96,30 +96,30 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
      */
     private final double p;
     
-    public SkipListMap(double coinProbability, Random random) {
+    public PughSkipListMap(double coinProbability, Random random) {
         this.p = validateCoinProbability(coinProbability);
         this.random = Objects.requireNonNull(random, "Input Random is null.");
     }
     
-    public SkipListMap(double coinProbability, long seed) {
+    public PughSkipListMap(double coinProbability, long seed) {
         this(coinProbability, new Random(seed));
     }
     
-    public SkipListMap(double coinProbability) {
+    public PughSkipListMap(double coinProbability) {
         this(coinProbability, new Random());
     }
     
-    public SkipListMap(Random random) {
+    public PughSkipListMap(Random random) {
         this.random = Objects.requireNonNull(random, "Input Random is null.");
         this.p = DEFAULT_COIN_PROBABILITY;
     }
     
-    public SkipListMap(long seed) {
+    public PughSkipListMap(long seed) {
         this.random = new Random(seed);
         this.p = DEFAULT_COIN_PROBABILITY;
     }
     
-    public SkipListMap() {
+    public PughSkipListMap() {
         this.random = new Random();
         this.p = DEFAULT_COIN_PROBABILITY;
     }
@@ -376,9 +376,8 @@ public final class SkipListMap<K extends Comparable<? super K>, V>
 
     private static void throwUnsupported() {
         throw new UnsupportedOperationException(
-                String.format(
-                        "%s does not support this method.", 
-                        SkipListMap.class.getName()));
+                String.format("%s does not support this method.", 
+                        PughSkipListMap.class.getName()));
     }
     
     private SkipListMapNode<K, V> accessNode(K searchKey) {

@@ -14,11 +14,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-public final class SkipListMapTest {
+public final class PughSkipListMapTest {
     
     @Test
     public void put() {
-        SkipListMap<Integer, String> map = new SkipListMap<>(0.5, 13L);
+        PughSkipListMap<Integer, String> map = new PughSkipListMap<>(0.5, 13L);
         
         assertNull(map.put(2, "2"));
         assertNull(map.put(4, "4"));
@@ -36,7 +36,7 @@ public final class SkipListMapTest {
     
     @Test
     public void remove() {
-        SkipListMap<Integer, String> map = new SkipListMap<>(0.5, 13L);
+        PughSkipListMap<Integer, String> map = new PughSkipListMap<>(0.5, 13L);
         
         assertNull(map.remove(1));
         assertFalse(map.containsKey(1));
@@ -92,7 +92,7 @@ public final class SkipListMapTest {
     @Test
     public void compareToTreeMapBruteForce() {
         Random random = new Random(13L);
-        Map<Integer, Long> skipListMap = new SkipListMap<>(random);
+        Map<Integer, Long> skipListMap = new PughSkipListMap<>(random);
         Map<Integer, Long> treeMap = new TreeMap<>();
         List<Integer> presentList = new ArrayList<>();
         List<Integer> missingList = new ArrayList<>();

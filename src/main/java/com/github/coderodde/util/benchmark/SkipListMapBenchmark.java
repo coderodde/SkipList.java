@@ -1,25 +1,23 @@
 package com.github.coderodde.util.benchmark;
 
-import com.github.coderodde.util.SkipListMap;
+import com.github.coderodde.util.PughSkipListMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public final class SkipListMapBenchmark {
     
     private static final int MAP_SIZE = 10_000;
     
     public static void main(String[] args) {
-        long seed = parseSeed(args);
         double coinProbability = parseCoinProbability(args);
         coinProbability = 0.25;
-        seed = 1709125105008L;
-        System.out.printf("Seed = %d.\n", seed);
         System.out.printf("Coin probability = %f.\n", coinProbability);
         
-        Random random = new Random(seed);
+        Random random = new Random(13L);
         
         List<Integer> list = new ArrayList<>(MAP_SIZE);
         
@@ -29,10 +27,11 @@ public final class SkipListMapBenchmark {
         
         Collections.shuffle(list, random);
         
-        SkipListMap<Integer, Long> skipListMap = 
-                new SkipListMap<>(coinProbability, random);
+        PughSkipListMap<Integer, Long> skipListMap = 
+                new PughSkipListMap<>(coinProbability, random);
         
-        TreeMap<Integer, Long> treeMap = new TreeMap<>();
+        ConcurrentSkipListMap<Integer, Long> treeMap =
+                new ConcurrentSkipListMap<>();
         
         long totalSkipListMap = 0L;
         long totalTreeMap = 0L;
@@ -140,13 +139,13 @@ public final class SkipListMapBenchmark {
     
     private static double parseCoinProbability(String[] args) {
         if (args.length < 2) {
-            return SkipListMap.DEFAULT_COIN_PROBABILITY;
+            return PughSkipListMap.DEFAULT_COIN_PROBABILITY;
         }
         
         try {
             return Double.parseDouble(args[0]);
         } catch (NumberFormatException ex) {
-            return SkipListMap.DEFAULT_COIN_PROBABILITY;
+            return PughSkipListMap.DEFAULT_COIN_PROBABILITY;
         }
     }
 }
