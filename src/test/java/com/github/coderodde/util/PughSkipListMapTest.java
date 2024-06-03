@@ -92,7 +92,7 @@ public final class PughSkipListMapTest {
     @Test
     public void compareToTreeMapBruteForce() {
         Random random = new Random(13L);
-        Map<Integer, Long> skipListMap = new PughSkipListMap<>(random);
+        PughSkipListMap<Integer, Long> skipListMap = new PughSkipListMap<>(random);
         Map<Integer, Long> treeMap = new TreeMap<>();
         List<Integer> presentList = new ArrayList<>();
         List<Integer> missingList = new ArrayList<>();

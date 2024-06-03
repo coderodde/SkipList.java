@@ -17,7 +17,7 @@ public final class PughSkipListMap<K extends Comparable<? super K>, V>
     /**
      * The default coin probability.
      */
-    public static final double DEFAULT_COIN_PROBABILITY = 0.5;
+    public static final double DEFAULT_COIN_PROBABILITY = 0.25;
     
     /**
      * The minimum coin probability;
@@ -32,7 +32,7 @@ public final class PughSkipListMap<K extends Comparable<? super K>, V>
     /**
      * The maximum level of this skip list.
      */
-    private static final int MAXIMUM_NUMBER_OF_LEVELS = 20;
+    private static final int MAXIMUM_NUMBER_OF_LEVELS = 30;
     
     /**
      * Implements the actual skip list node.
@@ -83,7 +83,7 @@ public final class PughSkipListMap<K extends Comparable<? super K>, V>
      * Used in {@link #put(java.lang.Comparable, java.lang.Object)} and 
      * {@link #remove(java.lang.Object)}.
      */
-    private SkipListMapNode<K, V>[] update = 
+    private final SkipListMapNode<K, V>[] update = 
         new SkipListMapNode[MAXIMUM_NUMBER_OF_LEVELS];
     
     /**
@@ -404,14 +404,19 @@ public final class PughSkipListMap<K extends Comparable<? super K>, V>
     
     private int getRandomNumberOfLevels() {
         int newNumberOfLevels = 1;
+        int rnd = random.nextInt();
         
-        while (random.nextDouble() < p) {
-            if (newNumberOfLevels == MAXIMUM_NUMBER_OF_LEVELS) {
-                return MAXIMUM_NUMBER_OF_LEVELS;
-            }
-            
+        while ((rnd & 0x1) == 1) {
+            rnd >>= 1;
             newNumberOfLevels++;
         }
+//        while (random.nextDouble() < p) {
+//            if (newNumberOfLevels == MAXIMUM_NUMBER_OF_LEVELS) {
+//                return MAXIMUM_NUMBER_OF_LEVELS;
+//            }
+//            
+//            newNumberOfLevels++;
+//        }
         
         return newNumberOfLevels;
     }
