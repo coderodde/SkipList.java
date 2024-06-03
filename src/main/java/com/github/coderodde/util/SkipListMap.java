@@ -111,8 +111,7 @@ public final class SkipListMap<K, V> extends AbstractMap<K, V>
                 } else {
                     b = null;
                 }
-            }
-            else {
+            } else {
                 for (Index<K,V> q = h, r, d;;) { 
                     while ((r = q.right) != null) {
                         Node<K,V> p;
