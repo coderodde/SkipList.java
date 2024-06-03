@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-public final class PughSkipListMapTest {
+public final class PughSkipListMapTest2 {
     
     @Test
     public void put() {
